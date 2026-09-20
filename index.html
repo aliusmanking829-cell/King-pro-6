@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Pro 6 - AI Super Interface</title>
+    <title>King Pro 6 - AI Super App</title>
     <style>
         * {
             margin: 0;
@@ -20,6 +20,7 @@
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
+            position: relative;
         }
 
         /* Top Header */
@@ -29,6 +30,7 @@
             align-items: center;
             padding: 16px 20px;
             width: 100%;
+            z-index: 10;
         }
 
         .header-left {
@@ -72,6 +74,141 @@
             border-radius: 50%;
             object-fit: cover;
             border: 1px solid #ddd;
+        }
+
+        /* Sidebar Drawer */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 998;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100%;
+            background-color: #f9fbfd;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: left 0.3s ease;
+            padding: 20px 16px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f1f1f;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #444;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 28px;
+            font-size: 15px;
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: #e9eff6;
+        }
+
+        .menu-item.new-chat-btn {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #5f6368;
+            margin: 16px 0 8px 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .recent-box {
+            padding: 12px 16px;
+            color: #5f6368;
+            font-size: 14px;
+        }
+
+        .sidebar-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f1f1f;
+        }
+
+        .settings-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #5f6368;
         }
 
         /* Main Center Area */
@@ -161,10 +298,57 @@
 </head>
 <body>
 
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar Drawer -->
+    <div class="sidebar" id="appSidebar">
+        <div>
+            <div class="sidebar-header">
+                <span class="sidebar-title">King Pro 6</span>
+                <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-item new-chat-btn">
+                    <span>✏️</span> New chat
+                </div>
+                <div class="menu-item">
+                    <span>🔍</span> Search chats
+                </div>
+                <div class="menu-item">
+                    <span>🖼️</span> Images
+                </div>
+                <div class="menu-item">
+                    <span>📚</span> Library
+                </div>
+
+                <div class="sidebar-section-title">Notebooks</div>
+                <div class="menu-item">
+                    <span>➕</span> New notebook
+                </div>
+
+                <div class="sidebar-section-title">Recent</div>
+                <div class="recent-box">
+                    <strong>No saved chats</strong><br>
+                    <span style="font-size: 12px;">Recent chats will appear here so that you can continue them later.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="footer-user-info">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Ali Usman King" class="user-avatar">
+                <span class="footer-user-name">Ali Usman King</span>
+            </div>
+            <button class="settings-btn" title="Settings">⚙️</button>
+        </div>
+    </div>
+
     <!-- Top Header -->
     <header class="app-header">
         <div class="header-left">
-            <button class="menu-icon">☰</button>
+            <button class="menu-icon" onclick="toggleSidebar()">☰</button>
             <div class="model-selector-container">
                 King Pro 6 <span>▼</span>
             </div>
@@ -190,6 +374,15 @@
             <button class="input-action-btn audio-btn" title="Audio mode">🎛️</button>
         </div>
     </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('appSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+    </script>
 
 </body>
 </html>
