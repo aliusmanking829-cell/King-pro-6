@@ -211,6 +211,127 @@
             color: #5f6368;
         }
 
+        /* Plus Action Popup Menu */
+        .plus-popup-menu {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            width: 90%;
+            max-width: 650px;
+            background-color: #f8fafd;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 1000;
+            padding: 20px;
+            display: none;
+            opacity: 0;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e4ee;
+        }
+
+        .plus-popup-menu.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .popup-cards-row {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e2e7f0;
+        }
+
+        .popup-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e7f0;
+            border-radius: 20px;
+            padding: 16px;
+            min-width: 110px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: background 0.2s;
+        }
+
+        .popup-card:hover {
+            background-color: #f1f5fb;
+        }
+
+        .popup-card-icon {
+            font-size: 24px;
+            background: #f0f4f9;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f1f1f;
+        }
+
+        .popup-list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .popup-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .popup-list-item:hover {
+            background-color: #edf2fc;
+        }
+
+        .popup-list-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .popup-list-icon {
+            font-size: 22px;
+        }
+
+        .popup-list-text h4 {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1f1f1f;
+        }
+
+        .popup-list-text p {
+            font-size: 13px;
+            color: #5f6368;
+        }
+
+        .upgrade-tag {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
         /* Main Center Area */
         .main-center {
             flex: 1;
@@ -345,6 +466,64 @@
         </div>
     </div>
 
+    <!-- Plus Popup Menu -->
+    <div class="plus-popup-menu" id="plusMenu">
+        <div class="popup-cards-row">
+            <div class="popup-card">
+                <div class="popup-card-icon">🖼️</div>
+                <div class="popup-card-title">Photos</div>
+            </div>
+            <div class="popup-card">
+                <div class="popup-card-icon">📷</div>
+                <div class="popup-card-title">Camera</div>
+            </div>
+            <div class="popup-card">
+                <div class="popup-card-icon">👤</div>
+                <div class="popup-card-title">Avatar</div>
+            </div>
+        </div>
+
+        <div class="popup-list-items">
+            <div class="popup-list-item">
+                <div class="popup-list-left">
+                    <span class="popup-list-icon">🎨</span>
+                    <div class="popup-list-text">
+                        <h4>Images</h4>
+                        <p>Create and edit</p>
+                    </div>
+                </div>
+            </div>
+            <div class="popup-list-item">
+                <div class="popup-list-left">
+                    <span class="popup-list-icon">🎬</span>
+                    <div class="popup-list-text">
+                        <h4>Video</h4>
+                        <p>Generate with Veo</p>
+                    </div>
+                </div>
+                <span class="upgrade-tag">Upgrade</span>
+            </div>
+            <div class="popup-list-item">
+                <div class="popup-list-left">
+                    <span class="popup-list-icon">🎵</span>
+                    <div class="popup-list-text">
+                        <h4>Music</h4>
+                        <p>Make audio tracks</p>
+                    </div>
+                </div>
+            </div>
+            <div class="popup-list-item">
+                <div class="popup-list-left">
+                    <span class="popup-list-icon">💻</span>
+                    <div class="popup-list-text">
+                        <h4>Canvas</h4>
+                        <p>Code, write or make slides</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Top Header -->
     <header class="app-header">
         <div class="header-left">
@@ -368,7 +547,7 @@
     <!-- Bottom Floating Input Bar -->
     <div class="bottom-container">
         <div class="chat-input-bar">
-            <button class="input-action-btn" title="Add attachment">+</button>
+            <button class="input-action-btn" title="Add attachment" onclick="togglePlusMenu()">+</button>
             <input type="text" class="chat-input-field" placeholder="Ask King Pro 6" id="userInput" />
             <button class="input-action-btn mic-btn" title="Voice search">🎤</button>
             <button class="input-action-btn audio-btn" title="Audio mode">🎛️</button>
@@ -381,6 +560,19 @@
             const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
+        }
+
+        function togglePlusMenu() {
+            const plusMenu = document.getElementById('plusMenu');
+            plusMenu.classList.toggle('active');
+        }
+
+        // Close popup menu when clicking outside
+        window.onclick = function(event) {
+            const plusMenu = document.getElementById('plusMenu');
+            if (!event.target.matches('.input-action-btn') && !plusMenu.contains(event.target)) {
+                plusMenu.classList.remove('active');
+            }
         }
     </script>
 
