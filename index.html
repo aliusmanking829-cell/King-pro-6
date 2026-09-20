@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+<html lang="ur" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,264 +12,97 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         body {
-            background-color: #f8f9fa;
-            color: #202123;
+            background-color: #f0f4f9;
+            color: #1f1f1f;
             height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-        header {
-            padding: 15px 20px;
-            background: #ffffff;
-            border-bottom: 1px solid #e5e5e5;
-            display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        h1 {
-            font-size: 1.2rem;
-            color: #1a73e8;
-            font-weight: bold;
-        }
-        .chat-container {
+        .main-content {
             flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-width: 800px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        .welcome-screen {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex: 1;
             text-align: center;
-            gap: 10px;
+            padding: 20px;
         }
-        .welcome-screen h2 {
+        .main-content h2 {
             font-size: 1.8rem;
-            color: #3c4043;
+            color: #444;
+            font-weight: 400;
         }
-        .message {
-            max-width: 85%;
-            padding: 12px 18px;
-            border-radius: 16px;
-            line-height: 1.6;
-            word-wrap: break-word;
-        }
-        .user-message {
-            background: #e8f0fe;
-            color: #174ea6;
-            align-self: flex-start;
-        }
-        .ai-message {
-            background: #ffffff;
-            color: #202123;
-            align-self: flex-end;
-            border: 1px solid #e5e5e5;
-        }
-        /* Input Area & Popup Menu */
-        .input-container-wrapper {
-            padding: 15px 20px;
-            background: #f8f9fa;
-            display: flex;
-            justify-content: center;
-            position: relative;
+        /* Exact Bar Design as in Screenshot */
+        .input-bar-wrapper {
+            width: 100%;
+            max-width: 750px;
+            padding: 20px;
         }
         .input-box {
             display: flex;
             align-items: center;
             background: #ffffff;
-            border: 1px solid #dadce0;
-            border-radius: 30px;
-            padding: 8px 15px;
-            width: 100%;
-            max-width: 700px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            border: 1px solid #c4c7c5;
+            border-radius: 32px;
+            padding: 10px 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            gap: 12px;
         }
         .icon-btn {
             background: transparent;
             border: none;
             font-size: 1.2rem;
-            color: #5f6368;
+            color: #444746;
             cursor: pointer;
-            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         input {
             flex: 1;
             background: transparent;
             border: none;
             outline: none;
-            color: #202123;
+            color: #1f1f1f;
             font-size: 1rem;
-            padding: 8px;
-            text-align: right;
         }
-        .send-btn {
-            background: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        /* Popup Menu for Plus Button */
-        .features-menu {
-            position: absolute;
-            bottom: 75px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffffff;
-            border: 1px solid #dadce0;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: none;
-            flex-direction: column;
-            width: 250px;
-            padding: 8px 0;
-            z-index: 100;
-        }
-        .features-menu.active {
-            display: flex;
-        }
-        .feature-item {
-            padding: 12px 20px;
-            font-size: 0.95rem;
-            color: #202123;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid #f1f3f4;
-        }
-        .feature-item:last-child {
-            border-bottom: none;
-        }
-        .feature-item:hover {
-            background: #f1f3f4;
+        .model-badge {
+            font-size: 0.85rem;
+            color: #444746;
+            background: #f0f4f9;
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid #d8dbde;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>King Pro 6</h1>
-    </header>
-
-    <div class="chat-container" id="chatContainer">
-        <div class="welcome-screen" id="welcomeScreen">
-            <h2>السلام علیکم، علی عثمان کنگ</h2>
-            <p>آج ہم کس چیز پر بات کریں؟</p>
-        </div>
+    <div class="main-content">
+        <h2>The mic is yours, Ali</h2>
     </div>
 
-    <div class="input-container-wrapper">
-        <!-- Features Popup Menu -->
-        <div class="features-menu" id="featuresMenu">
-            <div class="feature-item" onclick="selectFeature('photo')">📷 فوٹو اپ لوڈ / بنانا</div>
-            <div class="feature-item" onclick="selectFeature('video')">🎬 ویڈیو آئیڈیاز / ایڈیٹنگ</div>
-            <div class="feature-item" onclick="selectFeature('code')">💻 کوڈنگ لکھنا اور فکس کرنا</div>
-            <div class="feature-item" onclick="selectFeature('newchat')">✨ نئی چیت شروع کریں</div>
-        </div>
-
+    <div class="input-bar-wrapper">
         <div class="input-box">
-            <button class="icon-btn" title="Menu" onclick="toggleMenu()">＋</button>
-            <input type="text" id="userInput" placeholder="Ask King Pro 6..." onkeypress="handleKeyPress(event)">
-            <button class="icon-btn" title="Mic" onclick="startVoice()">🎤</button>
-            <button class="send-btn" onclick="sendMessage()">➔</button>
+            <button class="icon-btn" title="Add">＋</button>
+            <input type="text" id="userInput" placeholder="Ask Gemini" onkeypress="handleKeyPress(event)">
+            <span class="model-badge">Flash-Lite ▾</span>
+            <button class="icon-btn" title="Voice">🎙️</button>
         </div>
     </div>
 
     <script>
         const apiKey = "AQ.Ab8RN6ImIZ2Oiy0WyfLUR0_ud4PvuZNxclU2PCN_yo4LfLSFXA";
-        let isFirstMessage = true;
-
-        function toggleMenu() {
-            const menu = document.getElementById("featuresMenu");
-            menu.classList.toggle("active");
-        }
-
-        function selectFeature(type) {
-            const inputField = document.getElementById("userInput");
-            if (type === 'photo') {
-                inputField.value = "ایک شاندار فوٹو شوٹ اور تصویر بنانے کا طریقہ بتائیں۔";
-            } else if (type === 'video') {
-                inputField.value = "ویڈیو ایڈیٹنگ اور یوٹیوب چینل گرو کرنے کے طریقے بتائیں۔";
-            } else if (type === 'code') {
-                inputField.value = "مجھے ایک بہترین پروگرامنگ کوڈ لکھ کر دیں۔";
-            } else if (type === 'newchat') {
-                location.reload(); // نئی چیت کے لیے پیج ریف्रेश
-                return;
-            }
-            toggleMenu();
-            inputField.focus();
-        }
-
-        async function sendMessage() {
-            const inputField = document.getElementById("userInput");
-            const chatContainer = document.getElementById("chatContainer");
-            const welcomeScreen = document.getElementById("welcomeScreen");
-            const text = inputField.value.trim();
-
-            if (!text) return;
-
-            if (isFirstMessage && welcomeScreen) {
-                welcomeScreen.remove();
-                isFirstMessage = false;
-            }
-
-            const userMsg = document.createElement("div");
-            userMsg.className = "message user-message";
-            userMsg.innerText = text;
-            chatContainer.appendChild(userMsg);
-            
-            inputField.value = "";
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            const aiMsg = document.createElement("div");
-            aiMsg.className = "message ai-message";
-            aiMsg.innerText = "سوچ رہا ہوں...";
-            chatContainer.appendChild(aiMsg);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: text }] }]
-                    })
-                });
-
-                const data = await response.json();
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    aiMsg.innerText = data.candidates[0].content.parts[0].text;
-                } else {
-                    aiMsg.innerText = "معذرت، کوئی جواب موصول نہیں ہوا۔";
-                }
-            } catch (error) {
-                aiMsg.innerText = "کنکشن کا مسئلہ ہے، براہ کرم دوبارہ کوشش کریں۔";
-            }
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function startVoice() {
-            alert("وائس ریکارڈنگ فیچر فعال ہو رہا ہے...");
-        }
-
+        
         function handleKeyPress(event) {
             if (event.key === "Enter") {
-                sendMessage();
+                const val = document.getElementById("userInput").value;
+                if (val.trim()) {
+                    alert("پیغام درج ہو گیا: " + val);
+                    document.getElementById("userInput").value = "";
+                }
             }
         }
     </script>
