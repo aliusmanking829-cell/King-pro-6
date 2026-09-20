@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ur" dir="ltr">
+<html lang="ur" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,12 +56,25 @@
             align-items: center;
             gap: 15px;
         }
-        .menu-toggle-btn, .theme-toggle-btn {
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-toggle-btn, .theme-toggle-btn, .lang-toggle-btn {
             background: transparent;
             border: none;
-            font-size: 1.3rem;
+            font-size: 1rem;
             cursor: pointer;
             color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        .menu-toggle-btn {
+            font-size: 1.3rem;
+            border: none;
+            padding: 0;
         }
         .app-title {
             font-size: 1.1rem;
@@ -84,6 +97,17 @@
             flex-direction: column;
             padding: 20px 15px;
             gap: 10px;
+        }
+        html[dir="ltr"] .sidebar {
+            left: auto;
+            right: -280px;
+            border-right: none;
+            border-left: 1px solid var(--border-color);
+            transition: right 0.3s ease;
+        }
+        html[dir="ltr"] .sidebar.open {
+            right: 0;
+            left: auto;
         }
         .sidebar.open {
             left: 0;
@@ -174,7 +198,6 @@
             border: 1px solid var(--border-color);
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        /* Media Preview Box inside message */
         .media-preview {
             margin-top: 10px;
             max-width: 100%;
@@ -182,7 +205,7 @@
             overflow: hidden;
             border: 1px solid var(--border-color);
         }
-        .media-preview img, .media-preview video {
+        .media-preview img {
             width: 100%;
             height: auto;
             display: block;
@@ -267,6 +290,10 @@
             padding: 8px 0;
             z-index: 100;
         }
+        html[dir="ltr"] .model-menu {
+            right: auto;
+            left: 0;
+        }
         .model-menu.active {
             display: flex;
         }
@@ -327,9 +354,12 @@
     <div class="top-nav">
         <div class="top-left">
             <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
-            <span class="app-title">King Pro 6</span>
+            <span class="app-title" id="appTitle">King Pro 6</span>
         </div>
-        <button class="theme-toggle-btn" onclick="toggleDarkMode()" title="Dark/Light Mode">🌙</button>
+        <div class="top-right">
+            <button class="lang-toggle-btn" id="langBtn" onclick="toggleLanguage()">اردو / English</button>
+            <button class="theme-toggle-btn" onclick="toggleDarkMode()" title="Dark/Light Mode">🌙</button>
+        </div>
     </div>
 
     <!-- Sidebar Overlay -->
@@ -338,51 +368,51 @@
     <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h3>Menu</h3>
+            <h3 id="menuTitle">Menu</h3>
             <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
         </div>
-        <div class="sidebar-item" onclick="startNewChat()">✏️ New chat</div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Images')">🖼️ Images</div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Library')">📚 Library</div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Scheduled')">⏰ Scheduled</div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Plugins')">🔌 Plugins</div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Projects')">📁 Projects</div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Codex')">💻 Codex</div>
-        <div class="sidebar-item" onclick="selectSidebarOption('More')">⋯ More</div>
+        <div class="sidebar-item" onclick="startNewChat()">✏️ <span id="navNewChat">New chat</span></div>
+        <div class="sidebar-item" onclick="selectSidebarOption('Images')">🖼️ <span id="navImages">Images</span></div>
+        <div class="sidebar-item" onclick="selectSidebarOption('Library')">📚 <span id="navLibrary">Library</span></div>
+        <div class="sidebar-item" onclick="selectSidebarOption('Scheduled')">⏰ <span id="navScheduled">Scheduled</span></div>
+        <div class="sidebar-item" onclick="selectSidebarOption('Plugins')">🔌 <span id="navPlugins">Plugins</span></div>
+        <div class="sidebar-item" onclick="selectSidebarOption('Projects')">📁 <span id="navProjects">Projects</span></div>
+        <div class="sidebar-item" onclick="selectSidebarOption('Codex')">💻 <span id="navCodex">Codex</span></div>
+        <div class="sidebar-item" onclick="selectSidebarOption('More')">⋯ <span id="navMore">More</span></div>
     </div>
 
     <div class="chat-container" id="chatContainer">
         <div class="welcome-screen" id="welcomeScreen">
-            <h2>The mic is yours, Ali</h2>
+            <h2 id="welcomeText">The mic is yours, Ali</h2>
         </div>
     </div>
 
     <div class="input-bar-wrapper">
         <!-- Plus Popup Menu -->
         <div class="features-menu" id="featuresMenu">
-            <div class="feature-item" onclick="selectFeature('Upload files')">📎 Upload files</div>
-            <div class="feature-item" onclick="selectFeature('Create image')">🖼️ Create image</div>
-            <div class="feature-item" onclick="selectFeature('Create video')">🎬 Create video</div>
-            <div class="feature-item" onclick="selectFeature('Canvas')">🎨 Canvas</div>
+            <div class="feature-item" onclick="selectFeature('Upload files')">📎 <span id="ftUpload">Upload files</span></div>
+            <div class="feature-item" onclick="selectFeature('Create image')">🖼️ <span id="ftImage">Create image</span></div>
+            <div class="feature-item" onclick="selectFeature('Create video')">🎬 <span id="ftVideo">Create video</span></div>
+            <div class="feature-item" onclick="selectFeature('Canvas')">🎨 <span id="ftCanvas">Canvas</span></div>
         </div>
 
         <!-- Model Selection Dropdown Menu -->
         <div class="model-menu" id="modelMenu">
             <div class="model-item" onclick="selectModel('3.5 Flash-Lite')">
                 <strong>3.5 Flash-Lite</strong>
-                <span>Fastest answers</span>
+                <span id="m1Desc">Fastest answers</span>
             </div>
             <div class="model-item" onclick="selectModel('3.6 Flash')">
                 <strong>3.6 Flash (New)</strong>
-                <span>All-around help</span>
+                <span id="m2Desc">All-around help</span>
             </div>
             <div class="model-item" onclick="selectModel('3.1 Pro')">
                 <strong>3.1 Pro</strong>
-                <span>Advanced reasoning</span>
+                <span id="m3Desc">Advanced reasoning</span>
             </div>
             <div class="model-item" onclick="selectModel('Extended thinking')">
-                <strong>Extended thinking</strong>
-                <span>Complex problem solving</span>
+                <strong id="m4Title">Extended thinking</strong>
+                <span id="m4Desc">Complex problem solving</span>
             </div>
         </div>
 
@@ -403,15 +433,116 @@
     <script>
         const apiKey = "AQ.Ab8RN6ImIZ2Oiy0WyfLUR0_ud4PvuZNxclU2PCN_yo4LfLSFXA";
         let recognition = null;
+        let currentLang = 'en';
 
-        // Load chat history & theme on startup
+        const translations = {
+            en: {
+                welcome: "The mic is yours, Ali",
+                placeholder: "King Pro 6",
+                menu: "Menu",
+                newChat: "New chat",
+                images: "Images",
+                library: "Library",
+                scheduled: "Scheduled",
+                plugins: "Plugins",
+                projects: "Projects",
+                codex: "Codex",
+                more: "More",
+                upload: "Upload files",
+                createImg: "Create image",
+                createVid: "Create video",
+                canvas: "Canvas",
+                m1: "Fastest answers",
+                m2: "All-around help",
+                m3: "Advanced reasoning",
+                m4t: "Extended thinking",
+                m4: "Complex problem solving",
+                langLabel: "اردو"
+            },
+            ur: {
+                welcome: "مائیک آپ کا ہے، علی",
+                placeholder: "کنگ پرو 6",
+                menu: "مینو",
+                newChat: "نئی چیٹ",
+                images: "تصاویر",
+                library: "لائبریری",
+                scheduled: "شیڈولڈ",
+                plugins: "پلگ انز",
+                projects: "پراجیکٹس",
+                codex: "کوڈیکس",
+                more: "مزید",
+                upload: "فائلیں اپ لوڈ کریں",
+                createImg: "تصویر بنائیں",
+                createVid: "ویڈیو بنائیں",
+                canvas: "کینوس",
+                m1: "سب سے تیز جوابات",
+                m2: "ہر قسم کی مدد",
+                m3: "اعلی درجے کی استدلال",
+                m4t: "تفصیلی سوچ",
+                m4: "پیچیدہ مسائل کا حل",
+                langLabel: "English"
+            }
+        };
+
         window.onload = function() {
             loadChatHistory();
             if(localStorage.getItem("darkMode") === "enabled") {
                 document.body.classList.add("dark-mode");
                 document.querySelector(".theme-toggle-btn").innerText = "☀️";
             }
+            if(localStorage.getItem("appLang")) {
+                currentLang = localStorage.getItem("appLang");
+                updateLanguageUI();
+            }
         };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ur' : 'en';
+            localStorage.setItem("appLang", currentLang);
+            updateLanguageUI();
+        }
+
+        function updateLanguageUI() {
+            const t = translations[currentLang];
+            const root = document.getElementById("htmlRoot");
+            
+            if(currentLang === 'ur') {
+                root.setAttribute("dir", "rtl");
+                root.setAttribute("lang", "ur");
+            } else {
+                root.setAttribute("dir", "ltr");
+                root.setAttribute("lang", "en");
+            }
+
+            document.getElementById("langBtn").innerText = t.langLabel;
+            document.getElementById("menuTitle").innerText = t.menu;
+            document.getElementById("navNewChat").innerText = t.newChat;
+            document.getElementById("navImages").innerText = t.images;
+            document.getElementById("navLibrary").innerText = t.library;
+            document.getElementById("navScheduled").innerText = t.scheduled;
+            document.getElementById("navPlugins").innerText = t.plugins;
+            document.getElementById("navProjects").innerText = t.projects;
+            document.getElementById("navCodex").innerText = t.codex;
+            document.getElementById("navMore").innerText = t.more;
+            
+            document.getElementById("ftUpload").innerText = t.upload;
+            document.getElementById("ftImage").innerText = t.createImg;
+            document.getElementById("ftVideo").innerText = t.createVid;
+            document.getElementById("ftCanvas").innerText = t.canvas;
+
+            document.getElementById("m1Desc").innerText = t.m1;
+            document.getElementById("m2Desc").innerText = t.m2;
+            document.getElementById("m3Desc").innerText = t.m3;
+            document.getElementById("m4Title").innerText = t.m4t;
+            document.getElementById("m4Desc").innerText = t.m4;
+
+            document.getElementById("userInput").placeholder = t.placeholder;
+            
+            const welcomeText = document.getElementById("welcomeText");
+            if(welcomeText) {
+                welcomeText.innerText = t.welcome;
+            }
+        }
 
         function toggleDarkMode() {
             document.body.classList.toggle("dark-mode");
@@ -434,9 +565,10 @@
 
         function startNewChat() {
             localStorage.removeItem("kingProChatHistory");
+            const t = translations[currentLang];
             document.getElementById("chatContainer").innerHTML = `
                 <div class="welcome-screen" id="welcomeScreen">
-                    <h2>The mic is yours, Ali</h2>
+                    <h2 id="welcomeText">${t.welcome}</h2>
                 </div>
             `;
             toggleSidebar();
@@ -485,29 +617,29 @@
             if (!recognition) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
-                recognition.lang = 'ur-PK';
+                recognition.lang = currentLang === 'ur' ? 'ur-PK' : 'en-US';
                 recognition.interimResults = false;
 
                 recognition.onstart = function() {
                     micBtn.classList.add("recording");
-                    inputField.placeholder = "Sun raha hoon... bolein";
+                    inputField.placeholder = currentLang === 'ur' ? "سن رہا ہوں..." : "Listening...";
                 };
 
                 recognition.onresult = function(event) {
                     inputField.value = event.results[0][0].transcript;
                     micBtn.classList.remove("recording");
-                    inputField.placeholder = "King Pro 6";
+                    inputField.placeholder = translations[currentLang].placeholder;
                     sendMessage();
                 };
 
                 recognition.onerror = function() {
                     micBtn.classList.remove("recording");
-                    inputField.placeholder = "King Pro 6";
+                    inputField.placeholder = translations[currentLang].placeholder;
                 };
 
                 recognition.onend = function() {
                     micBtn.classList.remove("recording");
-                    inputField.placeholder = "King Pro 6";
+                    inputField.placeholder = translations[currentLang].placeholder;
                 };
             }
 
@@ -528,7 +660,7 @@
             let history = JSON.parse(localStorage.getItem("kingProChatHistory"));
             if (history && history.length > 0) {
                 const chatContainer = document.getElementById("chatContainer");
-                chatContainer.innerHTML = ""; // Remove welcome screen
+                chatContainer.innerHTML = "";
                 history.forEach(item => {
                     const msgDiv = document.createElement("div");
                     msgDiv.className = `message ${item.sender === 'user' ? 'user-message' : 'ai-message'}`;
@@ -562,7 +694,7 @@
 
             const aiMsg = document.createElement("div");
             aiMsg.className = "message ai-message";
-            aiMsg.innerText = "Soch raha hoon...";
+            aiMsg.innerText = currentLang === 'ur' ? "سوچ رہا ہوں..." : "Thinking...";
             chatContainer.appendChild(aiMsg);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
@@ -580,7 +712,6 @@
                     let replyText = data.candidates[0].content.parts[0].text;
                     let mediaHtml = "";
 
-                    // Direct Image/Media Preview support if user asks to create image
                     if (text.toLowerCase().includes("create image") || text.includes("تصویر")) {
                         mediaHtml = `<div class="media-preview"><img src="https://picsum.photos/400/250" alt="Generated Image"></div>`;
                     }
@@ -588,10 +719,10 @@
                     aiMsg.innerHTML = replyText + mediaHtml;
                     saveMessageToLocalStorage('ai', replyText, mediaHtml);
                 } else {
-                    aiMsg.innerText = "Maazrat, koi jawab mosool nahi hua.";
+                    aiMsg.innerText = currentLang === 'ur' ? "معذرت، کوئی جواب موصول نہیں ہوا۔" : "Sorry, no response received.";
                 }
             } catch (error) {
-                aiMsg.innerText = "Connection ka masla hai, barah-e-karam dobara koshish karein.";
+                aiMsg.innerText = currentLang === 'ur' ? "کنکشن کا مسئلہ ہے، براہ کرم دوبارہ کوشش کریں۔" : "Connection error, please try again.";
             }
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
