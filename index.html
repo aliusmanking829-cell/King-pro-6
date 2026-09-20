@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Super App - Advanced Sidebar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        :root {
+            --bg-color: #131314;
+            --sidebar-bg: #1e1f20;
+            --surface-color: #282a2c;
+            --text-primary: #e3e3e3;
+            --text-secondary: #c4c7c5;
+            --accent-color: #8ab4f8;
+            --border-color: #3c4043;
+            --hover-color: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            padding: 14px;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-top {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .new-chat-btn {
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 28px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
+        }
+
+        .new-chat-btn:hover {
+            background-color: var(--hover-color);
+        }
+
+        .chat-search-wrapper {
+            position: relative;
+            margin-top: 4px;
+        }
+
+        .chat-search-input {
+            width: 100%;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px 8px 34px;
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .chat-search-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .history-container {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 10px;
+            padding-right: 4px;
+        }
+
+        .history-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding-left: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .history-item {
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: background 0.15s;
+        }
+
+        .history-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .history-item.active {
+            background-color: var(--surface-color);
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .sidebar-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-footer-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .sidebar-footer-btn:hover {
+            background-color: var(--hover-color);
+        }
+
+        .history-container::-webkit-scrollbar {
+            width: 5px;
+        }
+        .history-container::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-top">
+            <button class="new-chat-btn" onclick="createNewChat()">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <span>✨</span> نئی چیٹ (New Chat)
+                </span>
+                <span>✏️</span>
+            </button>
+
+            <div class="chat-search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="chatSearch" class="chat-search-input" placeholder="پرانی چیٹس تلاش کریں..." onkeyup="searchChats()">
+            </div>
+
+            <div class="history-container" id="historyContainer">
+                <div class="history-section-title">آج (Today)</div>
+                <div class="history-list">
+                    <div class="history-item active" onclick="loadChat('1')">
+                        <span>👑 SardarJi AI Brand Logo Design</span>
+                    </div>
+                    <div class="history-item" onclick="loadChat('2')">
+                        <span>🎵 پنجابی ہپ ہاپ ٹریک پرامپٹ</span>
+                    </div>
+                </div>
+
+                <div class="history-section-title" style="margin-top: 8px;">پچھلے 7 دن (Previous 7 Days)</div>
+                <div class="history-list">
+                    <div class="history-item" onclick="loadChat('3')">
+                        <span>🚗 لگژری کار فوٹو شوٹ کانسیپٹ</span>
+                    </div>
+                    <div class="history-item" onclick="loadChat('4')">
+                        <span>💻 Python AI Script Code</span>
+                    </div>
+                    <div class="history-item" onclick="loadChat('5')">
+                        <span>📱 سائیڈ بار ڈیزائن اپڈیٹ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-bottom">
+            <button class="sidebar-footer-btn" onclick="openSettings()">
+                <span>⚙️</span> ترتیبات اور پروفائل (Settings)
+            </button>
+            <button class="sidebar-footer-btn" onclick="clearAllHistory()" style="color: #f28b82;">
+                <span>🗑️</span> تمام ہسٹری صاف کریں
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function createNewChat() {
+            alert('نئی چیٹ شروع ہو گئی ہے! اب آپ نیا سوال پوچھ سکتے ہیں۔');
+        }
+
+        function searchChats() {
+            const query = document.getElementById('chatSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.history-item');
+            
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function loadChat(chatId) {
+            alert('چیٹ لوڈ ہو رہی ہے ID: ' + chatId);
+        }
+
+        function openSettings() {
+            alert('سیٹنگز پینل اوپن ہو رہا ہے...');
+        }
+
+        function clearAllHistory() {
+            if(confirm('کیا آپ واقعی تمام چیٹ ہسٹری مٹانا چاہتے ہیں؟')) {
+                document.getElementById('historyContainer').innerHTML = '<div style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 20px;">کوئی ہسٹری موجود نہیں</div>';
+            }
+        }
+    </script>
+</body>
+</html>
