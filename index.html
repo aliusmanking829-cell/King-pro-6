@@ -332,15 +332,24 @@
             border-radius: 12px;
         }
 
-        /* Main Center Area */
+        /* Chat Display Area */
         .main-center {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .welcome-screen {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 0 20px;
+            height: 100%;
         }
 
         .sparkle-shape {
@@ -357,6 +366,71 @@
             color: #1f1f1f;
             line-height: 1.2;
             letter-spacing: -0.5px;
+        }
+
+        /* Message Bubbles */
+        .chat-stream {
+            width: 100%;
+            max-width: 750px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .user-msg {
+            align-self: flex-end;
+            background-color: #f0f4f9;
+            padding: 12px 18px;
+            border-radius: 20px 20px 4px 20px;
+            max-width: 80%;
+            font-size: 15px;
+            color: #1f1f1f;
+        }
+
+        .ai-msg-container {
+            align-self: flex-start;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .ai-text {
+            font-size: 15px;
+            color: #202124;
+            line-height: 1.6;
+        }
+
+        .ai-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #5f6368;
+            padding: 6px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background-color: #f1f3f4;
         }
 
         /* Bottom Chat Bar */
@@ -413,8 +487,15 @@
             color: #747775;
         }
 
-        .mic-btn, .audio-btn {
-            font-size: 18px;
+        .mic-btn.recording {
+            color: #ea4335;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -432,7 +513,7 @@
             </div>
             
             <div class="sidebar-menu">
-                <div class="menu-item new-chat-btn">
+                <div class="menu-item new-chat-btn" onclick="location.reload()">
                     <span>✏️</span> New chat
                 </div>
                 <div class="menu-item">
@@ -534,24 +615,27 @@
             </div>
         </div>
         <div class="header-right">
-            <button class="tools-icon">✏️</button>
+            <button class="tools-icon" onclick="location.reload()">✏️</button>
             <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="User" class="user-avatar">
         </div>
     </header>
 
     <!-- Main Center Content -->
-    <main class="main-center">
-        <div class="sparkle-shape">✦</div>
-        <h1 class="hero-title">What should we focus on?</h1>
+    <main class="main-center" id="mainContainer">
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="sparkle-shape">✦</div>
+            <h1 class="hero-title">What should we focus on?</h1>
+        </div>
+        <div class="chat-stream" id="chatStream" style="display: none;"></div>
     </main>
 
     <!-- Bottom Floating Input Bar -->
     <div class="bottom-container">
         <div class="chat-input-bar">
             <button class="input-action-btn" title="Add attachment" onclick="togglePlusMenu(event)">+</button>
-            <input type="text" class="chat-input-field" placeholder="Ask King Pro 6" id="userInput" />
-            <button class="input-action-btn mic-btn" title="Voice search">🎤</button>
-            <button class="input-action-btn audio-btn" title="Audio mode">🎛️</button>
+            <input type="text" class="chat-input-field" placeholder="Ask King Pro 6" id="userInput" onkeypress="handleKeyPress(event)" />
+            <button class="input-action-btn mic-btn" id="micBtn" title="Voice search" onclick="startVoiceInput()">🎤</button>
+            <button class="input-action-btn" title="Send" onclick="handleUserSubmit()">➤</button>
         </div>
     </div>
 
@@ -569,16 +653,128 @@
             plusMenu.classList.toggle('active');
         }
 
-        // Close menus when clicking outside
         document.addEventListener('click', function(event) {
             const plusMenu = document.getElementById('plusMenu');
-            const sidebar = document.getElementById('appSidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            
             if (!plusMenu.contains(event.target) && !event.target.matches('button[title="Add attachment"]')) {
                 plusMenu.classList.remove('active');
             }
         });
+
+        // Voice Input (Speech to Text)
+        function startVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("معذرت، آپ کا براؤزر وائس انपुट کو سپورٹ نہیں کرتا۔");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'ur-PK'; // اردو اور دیگر زبانوں کے لیے
+            recognition.interimResults = false;
+
+            const micBtn = document.getElementById('micBtn');
+            micBtn.classList.add('recording');
+
+            recognition.onresult = function(event) {
+                const speechText = event.results[0][0].transcript;
+                document.getElementById('userInput').value = speechText;
+                micBtn.classList.remove('recording');
+                handleUserSubmit(); // بولتے ہی خودکار طور پر سوال بھیج دے گا
+            };
+
+            recognition.onerror = function() {
+                micBtn.classList.remove('recording');
+            };
+
+            recognition.onend = function() {
+                micBtn.classList.remove('recording');
+            };
+
+            recognition.start();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                handleUserSubmit();
+            }
+        }
+
+        // Handle sending message and generating AI response with Speaker, Copy, Like & Dislike
+        function handleUserSubmit() {
+            const inputField = document.getElementById('userInput');
+            const query = inputField.value.trim();
+            if (!query) return;
+
+            // Hide welcome screen and show chat stream
+            document.getElementById('welcomeScreen').style.display = 'none';
+            const chatStream = document.getElementById('chatStream');
+            chatStream.style.display = 'flex';
+
+            // Append User Message
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'message-box';
+            userMsgDiv.innerHTML = `<div class="user-msg">${query}</div>`;
+            chatStream.appendChild(userMsgDiv);
+
+            inputField.value = '';
+            chatStream.scrollTop = chatStream.scrollHeight;
+
+            // Simulate AI Response
+            setTimeout(() => {
+                const aiResponseText = `یہ آپ کے سوال "${query}" کا بہترین اور درست جواب ہے۔ آپ اسے سن سکتے ہیں، کاپی کر سکتے ہیں یا فیڈبیک دے سکتے ہیں۔`;
+                
+                const aiMsgDiv = document.createElement('div');
+                aiMsgDiv.className = 'message-box';
+                aiMsgDiv.innerHTML = `
+                    <div class="ai-msg-container">
+                        <div class="ai-text">${aiResponseText}</div>
+                        <div class="ai-actions">
+                            <button class="action-btn" title="سنیں (Speaker)" onclick="speakText(this)">🔊</button>
+                            <button class="action-btn" title="کاپی کریں (Copy)" onclick="copyText(this)">📋</button>
+                            <button class="action-btn" title="جواب ٹھیک ہے (Like)" onclick="reactFeedback(this, 'like')">👍</button>
+                            <button class="action-btn" title="جواب غلط ہے (Dislike)" onclick="reactFeedback(this, 'dislike')">👎</button>
+                        </div>
+                    </div>
+                `;
+                chatStream.appendChild(aiMsgDiv);
+                chatStream.scrollTop = chatStream.scrollHeight;
+            }, 600);
+        }
+
+        // Text-to-Speech (Speaker Function - Reads any language automatically)
+        function speakText(button) {
+            const aiText = button.parentElement.previousElementSibling.innerText;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop previous speech
+                const utterance = new SpeechSynthesisUtterance(aiText);
+                utterance.lang = 'ur-PK'; // ڈیفولت زبان، براؤزر خود بخود متن کی زبان پہچان لیتاہے
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("آپ کا براؤزر ٹیکسٹ ٹو اسپیچ کو سپورٹ نہیں کرتا۔");
+            }
+        }
+
+        // Copy Text Function
+        function copyText(button) {
+            const aiText = button.parentElement.previousElementSibling.innerText;
+            navigator.clipboard.writeText(aiText).then(() => {
+                alert("متن کاپی ہو گیا ہے!");
+            });
+        }
+
+        // Like / Dislike Feedback Function
+        function reactFeedback(button, type) {
+            const actionsDiv = button.parentElement;
+            if (type === 'like') {
+                button.style.color = '#34a853';
+                actionsDiv.querySelector('button[title*="Dislike"]').style.color = '#5f6368';
+                alert("آپ کے ردعمل کا شکریہ! جواب درست مانا گیا۔");
+            } else {
+                button.style.color = '#ea4335';
+                actionsDiv.querySelector('button[title*="Like"]').style.color = '#5f6368';
+                alert("آپ کے ردعمل کا شکریہ! ہم اس جواب کو بہتر کرنے کی کوشش کریں گے۔");
+            }
+        }
     </script>
 
 </body>
