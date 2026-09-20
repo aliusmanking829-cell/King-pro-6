@@ -11,34 +11,61 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
+        :root {
+            --bg-color: #f0f4f9;
+            --text-color: #1f1f1f;
+            --nav-bg: #ffffff;
+            --border-color: #e0e2e5;
+            --box-bg: #ffffff;
+            --user-msg-bg: #d3e3fd;
+            --user-msg-text: #041e49;
+            --ai-msg-bg: #ffffff;
+            --hover-bg: #e9ecef;
+        }
+        body.dark-mode {
+            --bg-color: #131314;
+            --text-color: #e3e3e3;
+            --nav-bg: #1e1f20;
+            --border-color: #333537;
+            --box-bg: #1e1f20;
+            --user-msg-bg: #004a77;
+            --user-msg-text: #ffffff;
+            --ai-msg-bg: #1e1f20;
+            --hover-bg: #2d2e30;
+        }
         body {
-            background-color: #f0f4f9;
-            color: #1f1f1f;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: background 0.3s, color 0.3s;
         }
         /* Top Navigation Bar */
         .top-nav {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 12px 20px;
-            background: #ffffff;
-            border-bottom: 1px solid #e0e2e5;
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .top-left {
+            display: flex;
+            align-items: center;
             gap: 15px;
         }
-        .menu-toggle-btn {
+        .menu-toggle-btn, .theme-toggle-btn {
             background: transparent;
             border: none;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             cursor: pointer;
-            color: #444746;
+            color: var(--text-color);
         }
         .app-title {
             font-size: 1.1rem;
             font-weight: 500;
-            color: #1f1f1f;
         }
 
         /* Sidebar Styling */
@@ -48,8 +75,8 @@
             left: -280px;
             width: 280px;
             height: 100%;
-            background: #f9f9f9;
-            border-right: 1px solid #e0e2e5;
+            background: var(--nav-bg);
+            border-right: 1px solid var(--border-color);
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             transition: left 0.3s ease;
             z-index: 1000;
@@ -67,21 +94,17 @@
             align-items: center;
             margin-bottom: 15px;
         }
-        .sidebar-header h3 {
-            font-size: 1.1rem;
-            color: #333;
-        }
         .close-sidebar {
             background: transparent;
             border: none;
             font-size: 1.2rem;
             cursor: pointer;
-            color: #555;
+            color: var(--text-color);
         }
         .sidebar-item {
             padding: 10px 14px;
             font-size: 0.95rem;
-            color: #333;
+            color: var(--text-color);
             border-radius: 8px;
             cursor: pointer;
             display: flex;
@@ -90,7 +113,7 @@
             transition: background 0.2s;
         }
         .sidebar-item:hover {
-            background: #e9ecef;
+            background: var(--hover-bg);
         }
 
         .sidebar-overlay {
@@ -130,7 +153,6 @@
         }
         .welcome-screen h2 {
             font-size: 1.8rem;
-            color: #444;
             font-weight: 400;
         }
         .message {
@@ -141,16 +163,29 @@
             word-wrap: break-word;
         }
         .user-message {
-            background: #d3e3fd;
-            color: #041e49;
+            background: var(--user-msg-bg);
+            color: var(--user-msg-text);
             align-self: flex-start;
         }
         .ai-message {
-            background: #ffffff;
-            color: #1f1f1f;
+            background: var(--ai-msg-bg);
+            color: var(--text-color);
             align-self: flex-end;
-            border: 1px solid #e0e2e5;
+            border: 1px solid var(--border-color);
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        /* Media Preview Box inside message */
+        .media-preview {
+            margin-top: 10px;
+            max-width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .media-preview img, .media-preview video {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         /* Bottom Input Bar */
@@ -160,12 +195,13 @@
             display: flex;
             justify-content: center;
             position: relative;
+            background: var(--bg-color);
         }
         .input-box {
             display: flex;
             align-items: center;
-            background: #ffffff;
-            border: 1px solid #c4c7c5;
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
             border-radius: 32px;
             padding: 10px 16px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -177,7 +213,7 @@
             background: transparent;
             border: none;
             font-size: 1.2rem;
-            color: #444746;
+            color: var(--text-color);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -197,7 +233,7 @@
             background: transparent;
             border: none;
             outline: none;
-            color: #1f1f1f;
+            color: var(--text-color);
             font-size: 1rem;
         }
 
@@ -207,11 +243,11 @@
         }
         .model-badge {
             font-size: 0.85rem;
-            color: #444746;
-            background: #f0f4f9;
+            color: var(--text-color);
+            background: var(--bg-color);
             padding: 6px 12px;
             border-radius: 8px;
-            border: 1px solid #d8dbde;
+            border: 1px solid var(--border-color);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -221,8 +257,8 @@
             position: absolute;
             bottom: 45px;
             right: 0;
-            background: #ffffff;
-            border: 1px solid #c4c7c5;
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             display: none;
@@ -237,7 +273,7 @@
         .model-item {
             padding: 10px 16px;
             font-size: 0.9rem;
-            color: #1f1f1f;
+            color: var(--text-color);
             cursor: pointer;
             display: flex;
             flex-direction: column;
@@ -245,11 +281,11 @@
             transition: background 0.2s;
         }
         .model-item:hover {
-            background: #f0f4f9;
+            background: var(--hover-bg);
         }
         .model-item span {
             font-size: 0.75rem;
-            color: #5f6368;
+            color: #8e918f;
         }
 
         /* Plus Menu Popup */
@@ -258,8 +294,8 @@
             bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
-            background: #ffffff;
-            border: 1px solid #c4c7c5;
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             display: none;
@@ -274,14 +310,14 @@
         .feature-item {
             padding: 10px 16px;
             font-size: 0.9rem;
-            color: #1f1f1f;
+            color: var(--text-color);
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         .feature-item:hover {
-            background: #f0f4f9;
+            background: var(--hover-bg);
         }
     </style>
 </head>
@@ -289,8 +325,11 @@
 
     <!-- Top Navigation Bar -->
     <div class="top-nav">
-        <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
-        <span class="app-title">King Pro 6</span>
+        <div class="top-left">
+            <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
+            <span class="app-title">King Pro 6</span>
+        </div>
+        <button class="theme-toggle-btn" onclick="toggleDarkMode()" title="Dark/Light Mode">🌙</button>
     </div>
 
     <!-- Sidebar Overlay -->
@@ -302,7 +341,7 @@
             <h3>Menu</h3>
             <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
         </div>
-        <div class="sidebar-item" onclick="selectSidebarOption('New chat')">✏️ New chat</div>
+        <div class="sidebar-item" onclick="startNewChat()">✏️ New chat</div>
         <div class="sidebar-item" onclick="selectSidebarOption('Images')">🖼️ Images</div>
         <div class="sidebar-item" onclick="selectSidebarOption('Library')">📚 Library</div>
         <div class="sidebar-item" onclick="selectSidebarOption('Scheduled')">⏰ Scheduled</div>
@@ -349,7 +388,6 @@
 
         <div class="input-box">
             <button class="icon-btn" title="Add" onclick="togglePlusMenu()">＋</button>
-            <!-- Input placeholder changed to King Pro 6 as requested -->
             <input type="text" id="userInput" placeholder="King Pro 6" onkeypress="handleKeyPress(event)">
             
             <div class="model-selector-container">
@@ -364,14 +402,44 @@
 
     <script>
         const apiKey = "AQ.Ab8RN6ImIZ2Oiy0WyfLUR0_ud4PvuZNxclU2PCN_yo4LfLSFXA";
-        let isFirstMessage = true;
         let recognition = null;
+
+        // Load chat history & theme on startup
+        window.onload = function() {
+            loadChatHistory();
+            if(localStorage.getItem("darkMode") === "enabled") {
+                document.body.classList.add("dark-mode");
+                document.querySelector(".theme-toggle-btn").innerText = "☀️";
+            }
+        };
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            const btn = document.querySelector(".theme-toggle-btn");
+            if(document.body.classList.contains("dark-mode")) {
+                localStorage.setItem("darkMode", "enabled");
+                btn.innerText = "☀️";
+            } else {
+                localStorage.setItem("darkMode", "disabled");
+                btn.innerText = "🌙";
+            }
+        }
 
         function toggleSidebar() {
             const sidebar = document.getElementById("sidebar");
             const overlay = document.getElementById("sidebarOverlay");
             sidebar.classList.toggle("open");
             overlay.classList.toggle("active");
+        }
+
+        function startNewChat() {
+            localStorage.removeItem("kingProChatHistory");
+            document.getElementById("chatContainer").innerHTML = `
+                <div class="welcome-screen" id="welcomeScreen">
+                    <h2>The mic is yours, Ali</h2>
+                </div>
+            `;
+            toggleSidebar();
         }
 
         function selectSidebarOption(optionName) {
@@ -450,6 +518,27 @@
             }
         }
 
+        function saveMessageToLocalStorage(sender, text, mediaHtml = "") {
+            let history = JSON.parse(localStorage.getItem("kingProChatHistory")) || [];
+            history.push({ sender, text, mediaHtml });
+            localStorage.setItem("kingProChatHistory", JSON.stringify(history));
+        }
+
+        function loadChatHistory() {
+            let history = JSON.parse(localStorage.getItem("kingProChatHistory"));
+            if (history && history.length > 0) {
+                const chatContainer = document.getElementById("chatContainer");
+                chatContainer.innerHTML = ""; // Remove welcome screen
+                history.forEach(item => {
+                    const msgDiv = document.createElement("div");
+                    msgDiv.className = `message ${item.sender === 'user' ? 'user-message' : 'ai-message'}`;
+                    msgDiv.innerHTML = item.text + (item.mediaHtml || "");
+                    chatContainer.appendChild(msgDiv);
+                });
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
         async function sendMessage() {
             const inputField = document.getElementById("userInput");
             const chatContainer = document.getElementById("chatContainer");
@@ -458,15 +547,15 @@
 
             if (!text) return;
 
-            if (isFirstMessage && welcomeScreen) {
+            if (welcomeScreen) {
                 welcomeScreen.remove();
-                isFirstMessage = false;
             }
 
             const userMsg = document.createElement("div");
             userMsg.className = "message user-message";
             userMsg.innerText = text;
             chatContainer.appendChild(userMsg);
+            saveMessageToLocalStorage('user', text);
             
             inputField.value = "";
             chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -488,7 +577,16 @@
 
                 const data = await response.json();
                 if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    aiMsg.innerText = data.candidates[0].content.parts[0].text;
+                    let replyText = data.candidates[0].content.parts[0].text;
+                    let mediaHtml = "";
+
+                    // Direct Image/Media Preview support if user asks to create image
+                    if (text.toLowerCase().includes("create image") || text.includes("تصویر")) {
+                        mediaHtml = `<div class="media-preview"><img src="https://picsum.photos/400/250" alt="Generated Image"></div>`;
+                    }
+
+                    aiMsg.innerHTML = replyText + mediaHtml;
+                    saveMessageToLocalStorage('ai', replyText, mediaHtml);
                 } else {
                     aiMsg.innerText = "Maazrat, koi jawab mosool nahi hua.";
                 }
