@@ -216,7 +216,7 @@
             position: fixed;
             bottom: 90px;
             left: 50%;
-            transform: translateX(-50%) translateY(20px);
+            transform: translateX(-50%) scale(0.95);
             width: 90%;
             max-width: 650px;
             background-color: #f8fafd;
@@ -226,14 +226,14 @@
             padding: 20px;
             display: none;
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: 1px solid #e0e4ee;
         }
 
         .plus-popup-menu.active {
             display: block;
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translateX(-50%) scale(1);
         }
 
         .popup-cards-row {
@@ -377,6 +377,7 @@
             width: 100%;
             max-width: 700px;
             box-shadow: 0 1px 6px rgba(32,33,36,0.1);
+            position: relative;
         }
 
         .input-action-btn {
@@ -547,7 +548,7 @@
     <!-- Bottom Floating Input Bar -->
     <div class="bottom-container">
         <div class="chat-input-bar">
-            <button class="input-action-btn" title="Add attachment" onclick="togglePlusMenu()">+</button>
+            <button class="input-action-btn" title="Add attachment" onclick="togglePlusMenu(event)">+</button>
             <input type="text" class="chat-input-field" placeholder="Ask King Pro 6" id="userInput" />
             <button class="input-action-btn mic-btn" title="Voice search">🎤</button>
             <button class="input-action-btn audio-btn" title="Audio mode">🎛️</button>
@@ -562,18 +563,22 @@
             overlay.classList.toggle('active');
         }
 
-        function togglePlusMenu() {
+        function togglePlusMenu(event) {
+            event.stopPropagation();
             const plusMenu = document.getElementById('plusMenu');
             plusMenu.classList.toggle('active');
         }
 
-        // Close popup menu when clicking outside
-        window.onclick = function(event) {
+        // Close menus when clicking outside
+        document.addEventListener('click', function(event) {
             const plusMenu = document.getElementById('plusMenu');
-            if (!event.target.matches('.input-action-btn') && !plusMenu.contains(event.target)) {
+            const sidebar = document.getElementById('appSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (!plusMenu.contains(event.target) && !event.target.matches('button[title="Add attachment"]')) {
                 plusMenu.classList.remove('active');
             }
-        }
+        });
     </script>
 
 </body>
