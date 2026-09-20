@@ -18,7 +18,6 @@
             display: flex;
             flex-direction: column;
         }
-        /* Top Header */
         header {
             padding: 15px 20px;
             background: #ffffff;
@@ -32,7 +31,6 @@
             color: #1a73e8;
             font-weight: bold;
         }
-        /* Chat Main Screen */
         .chat-container {
             flex: 1;
             overflow-y: auto;
@@ -44,7 +42,6 @@
             width: 100%;
             margin: 0 auto;
         }
-        /* Welcome Section */
         .welcome-screen {
             display: flex;
             flex-direction: column;
@@ -58,7 +55,6 @@
             font-size: 1.8rem;
             color: #3c4043;
         }
-        /* Message Bubbles */
         .message {
             max-width: 85%;
             padding: 12px 18px;
@@ -77,12 +73,13 @@
             align-self: flex-end;
             border: 1px solid #e5e5e5;
         }
-        /* Bottom Input Area matching the screenshot */
+        /* Input Area & Popup Menu */
         .input-container-wrapper {
             padding: 15px 20px;
             background: #f8f9fa;
             display: flex;
             justify-content: center;
+            position: relative;
         }
         .input-box {
             display: flex;
@@ -126,6 +123,41 @@
             justify-content: center;
             font-weight: bold;
         }
+        /* Popup Menu for Plus Button */
+        .features-menu {
+            position: absolute;
+            bottom: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            border: 1px solid #dadce0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            width: 250px;
+            padding: 8px 0;
+            z-index: 100;
+        }
+        .features-menu.active {
+            display: flex;
+        }
+        .feature-item {
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            color: #202123;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f1f3f4;
+        }
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        .feature-item:hover {
+            background: #f1f3f4;
+        }
     </style>
 </head>
 <body>
@@ -142,10 +174,18 @@
     </div>
 
     <div class="input-container-wrapper">
+        <!-- Features Popup Menu -->
+        <div class="features-menu" id="featuresMenu">
+            <div class="feature-item" onclick="selectFeature('photo')">📷 فوٹو اپ لوڈ / بنانا</div>
+            <div class="feature-item" onclick="selectFeature('video')">🎬 ویڈیو آئیڈیاز / ایڈیٹنگ</div>
+            <div class="feature-item" onclick="selectFeature('code')">💻 کوڈنگ لکھنا اور فکس کرنا</div>
+            <div class="feature-item" onclick="selectFeature('newchat')">✨ نئی چیت شروع کریں</div>
+        </div>
+
         <div class="input-box">
-            <button class="icon-btn" title="Add">＋</button>
+            <button class="icon-btn" title="Menu" onclick="toggleMenu()">＋</button>
             <input type="text" id="userInput" placeholder="Ask King Pro 6..." onkeypress="handleKeyPress(event)">
-            <button class="icon-btn" title="Mic">🎤</button>
+            <button class="icon-btn" title="Mic" onclick="startVoice()">🎤</button>
             <button class="send-btn" onclick="sendMessage()">➔</button>
         </div>
     </div>
@@ -153,6 +193,27 @@
     <script>
         const apiKey = "AQ.Ab8RN6ImIZ2Oiy0WyfLUR0_ud4PvuZNxclU2PCN_yo4LfLSFXA";
         let isFirstMessage = true;
+
+        function toggleMenu() {
+            const menu = document.getElementById("featuresMenu");
+            menu.classList.toggle("active");
+        }
+
+        function selectFeature(type) {
+            const inputField = document.getElementById("userInput");
+            if (type === 'photo') {
+                inputField.value = "ایک شاندار فوٹو شوٹ اور تصویر بنانے کا طریقہ بتائیں۔";
+            } else if (type === 'video') {
+                inputField.value = "ویڈیو ایڈیٹنگ اور یوٹیوب چینل گرو کرنے کے طریقے بتائیں۔";
+            } else if (type === 'code') {
+                inputField.value = "مجھے ایک بہترین پروگرامنگ کوڈ لکھ کر دیں۔";
+            } else if (type === 'newchat') {
+                location.reload(); // نئی چیت کے لیے پیج ریف्रेश
+                return;
+            }
+            toggleMenu();
+            inputField.focus();
+        }
 
         async function sendMessage() {
             const inputField = document.getElementById("userInput");
@@ -200,6 +261,10 @@
                 aiMsg.innerText = "کنکشن کا مسئلہ ہے، براہ کرم دوبارہ کوشش کریں۔";
             }
             chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function startVoice() {
+            alert("وائس ریکارڈنگ فیچر فعال ہو رہا ہے...");
         }
 
         function handleKeyPress(event) {
