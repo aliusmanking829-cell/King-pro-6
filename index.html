@@ -63,7 +63,7 @@
             border: 1px solid #e0e2e5;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        /* Bottom Input Bar & Popup Menu */
+        /* Bottom Input Bar */
         .input-bar-wrapper {
             width: 100%;
             padding: 15px 20px;
@@ -110,15 +110,57 @@
             color: #1f1f1f;
             font-size: 1rem;
         }
+        /* Model Selector Dropdown Container */
+        .model-selector-container {
+            position: relative;
+        }
         .model-badge {
             font-size: 0.85rem;
             color: #444746;
             background: #f0f4f9;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 8px;
             border: 1px solid #d8dbde;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-        /* Popup Menu for Plus Button */
+        .model-menu {
+            position: absolute;
+            bottom: 45px;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #c4c7c5;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            width: 260px;
+            padding: 8px 0;
+            z-index: 100;
+        }
+        .model-menu.active {
+            display: flex;
+        }
+        .model-item {
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            color: #1f1f1f;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            transition: background 0.2s;
+        }
+        .model-item:hover {
+            background: #f0f4f9;
+        }
+        .model-item span {
+            font-size: 0.75rem;
+            color: #5f6368;
+        }
+        /* Plus Menu Popup */
         .features-menu {
             position: absolute;
             bottom: 80px;
@@ -130,7 +172,7 @@
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             display: none;
             flex-direction: column;
-            width: 280px;
+            width: 250px;
             padding: 10px 0;
             z-index: 100;
         }
@@ -138,20 +180,16 @@
             display: flex;
         }
         .feature-item {
-            padding: 12px 20px;
-            font-size: 0.95rem;
+            padding: 10px 16px;
+            font-size: 0.9rem;
             color: #1f1f1f;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 12px;
-            transition: background 0.2s;
+            gap: 10px;
         }
         .feature-item:hover {
             background: #f0f4f9;
-        }
-        .feature-item span {
-            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -166,20 +204,42 @@
     <div class="input-bar-wrapper">
         <!-- Plus Popup Menu -->
         <div class="features-menu" id="featuresMenu">
-            <div class="feature-item" onclick="selectFeature('Upload files')"><span>📎</span> Upload files</div>
-            <div class="feature-item" onclick="selectFeature('Add from Drive')"><span>📁</span> Add from Drive</div>
-            <div class="feature-item" onclick="selectFeature('More uploads')"><span>⋯</span> More uploads</div>
-            <div class="feature-item" onclick="selectFeature('Create image')"><span>🖼️</span> Create image</div>
-            <div class="feature-item" onclick="selectFeature('Create video')"><span>🎬</span> Create video</div>
-            <div class="feature-item" onclick="selectFeature('Create music')"><span>🎵</span> Create music</div>
-            <div class="feature-item" onclick="selectFeature('Canvas')"><span>🎨</span> Canvas</div>
-            <div class="feature-item" onclick="selectFeature('Guided learning')"><span>💡</span> Guided learning</div>
+            <div class="feature-item" onclick="selectFeature('Upload files')">📎 Upload files</div>
+            <div class="feature-item" onclick="selectFeature('Create image')">🖼️ Create image</div>
+            <div class="feature-item" onclick="selectFeature('Create video')">🎬 Create video</div>
+            <div class="feature-item" onclick="selectFeature('Canvas')">🎨 Canvas</div>
+        </div>
+
+        <!-- Model Selection Dropdown Menu -->
+        <div class="model-menu" id="modelMenu">
+            <div class="model-item" onclick="selectModel('3.5 Flash-Lite')">
+                <strong>3.5 Flash-Lite</strong>
+                <span>Fastest answers</span>
+            </div>
+            <div class="model-item" onclick="selectModel('3.6 Flash')">
+                <strong>3.6 Flash (New)</strong>
+                <span>All-around help</span>
+            </div>
+            <div class="model-item" onclick="selectModel('3.1 Pro')">
+                <strong>3.1 Pro</strong>
+                <span>Advanced reasoning</span>
+            </div>
+            <div class="model-item" onclick="selectModel('Extended thinking')">
+                <strong>Extended thinking</strong>
+                <span>Complex problem solving</span>
+            </div>
         </div>
 
         <div class="input-box">
-            <button class="icon-btn" title="Add" onclick="toggleMenu()">＋</button>
+            <button class="icon-btn" title="Add" onclick="togglePlusMenu()">＋</button>
             <input type="text" id="userInput" placeholder="Ask Gemini" onkeypress="handleKeyPress(event)">
-            <span class="model-badge">Flash-Lite ▾</span>
+            
+            <div class="model-selector-container">
+                <div class="model-badge" id="currentModel" onclick="toggleModelMenu()">
+                    Flash-Lite ▾
+                </div>
+            </div>
+
             <button class="icon-btn" id="micBtn" title="Voice Search" onclick="toggleVoiceRecording()">🎙️</button>
         </div>
     </div>
@@ -189,45 +249,57 @@
         let isFirstMessage = true;
         let recognition = null;
 
-        function toggleMenu() {
+        function togglePlusMenu() {
             const menu = document.getElementById("featuresMenu");
+            const modelMenu = document.getElementById("modelMenu");
+            modelMenu.classList.remove("active");
             menu.classList.toggle("active");
+        }
+
+        function toggleModelMenu() {
+            const modelMenu = document.getElementById("modelMenu");
+            const menu = document.getElementById("featuresMenu");
+            menu.classList.remove("active");
+            modelMenu.classList.toggle("active");
+        }
+
+        function selectModel(modelName) {
+            document.getElementById("currentModel").innerHTML = modelName + " ▾";
+            toggleModelMenu();
         }
 
         function selectFeature(featureName) {
             const inputField = document.getElementById("userInput");
-            inputField.value = featureName + " کے بارے میں مدد کریں: ";
-            toggleMenu();
+            inputField.value = featureName + " ke liye madad karein: ";
+            togglePlusMenu();
             inputField.focus();
         }
 
-        // Voice Recording Implementation using Speech Recognition API
         function toggleVoiceRecording() {
             const micBtn = document.getElementById("micBtn");
             const inputField = document.getElementById("userInput");
 
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("آپ کا براؤزر وائس ریکارڈنگ کو سپورٹ نہیں کرتا۔");
+                alert("Aapka browser voice recording support nahi karta.");
                 return;
             }
 
             if (!recognition) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
-                recognition.lang = 'ur-PK'; // Urdu language support
+                recognition.lang = 'ur-PK';
                 recognition.interimResults = false;
 
                 recognition.onstart = function() {
                     micBtn.classList.add("recording");
-                    inputField.placeholder = "سن رہا ہوں... بولیں";
+                    inputField.placeholder = "Sun raha hoon... bolein";
                 };
 
                 recognition.onresult = function(event) {
-                    const speechToText = event.results[0][0].transcript;
-                    inputField.value = speechToText;
+                    inputField.value = event.results[0][0].transcript;
                     micBtn.classList.remove("recording");
                     inputField.placeholder = "Ask Gemini";
-                    sendMessage(); // Automatically send message after voice input
+                    sendMessage();
                 };
 
                 recognition.onerror = function() {
@@ -271,7 +343,7 @@
 
             const aiMsg = document.createElement("div");
             aiMsg.className = "message ai-message";
-            aiMsg.innerText = "سوچ رہا ہوں...";
+            aiMsg.innerText = "Soch raha hoon...";
             chatContainer.appendChild(aiMsg);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
@@ -288,10 +360,10 @@
                 if (data.candidates && data.candidates[0].content.parts[0].text) {
                     aiMsg.innerText = data.candidates[0].content.parts[0].text;
                 } else {
-                    aiMsg.innerText = "معذرت، کوئی جواب موصول نہیں ہوا۔";
+                    aiMsg.innerText = "Maazrat, koi jawab mosool nahi hua.";
                 }
             } catch (error) {
-                aiMsg.innerText = "کنکشن کا مسئلہ ہے، براہ کرم دوبارہ کوشش کریں۔";
+                aiMsg.innerText = "Connection ka masla hai, barah-e-karam dobara koshish karein.";
             }
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
