@@ -12,8 +12,8 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         body {
-            background-color: #131314;
-            color: #e3e3e3;
+            background-color: #f8f9fa;
+            color: #202123;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -21,15 +21,15 @@
         /* Top Header */
         header {
             padding: 15px 20px;
-            background: #1e1f20;
-            border-bottom: 1px solid #333;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e5e5;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         h1 {
             font-size: 1.2rem;
-            color: #8ab4f8;
+            color: #1a73e8;
             font-weight: bold;
         }
         /* Chat Main Screen */
@@ -44,7 +44,7 @@
             width: 100%;
             margin: 0 auto;
         }
-        /* Welcome / Front Board Screen */
+        /* Welcome Section */
         .welcome-screen {
             display: flex;
             flex-direction: column;
@@ -52,34 +52,11 @@
             align-items: center;
             flex: 1;
             text-align: center;
-            gap: 15px;
+            gap: 10px;
         }
         .welcome-screen h2 {
-            font-size: 2rem;
-            background: linear-gradient(90deg, #8ab4f8, #c58af9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .suggestions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
-        }
-        .suggestion-card {
-            background: #1e1f20;
-            border: 1px solid #333;
-            padding: 15px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #c4c7c5;
-            transition: background 0.2s;
-        }
-        .suggestion-card:hover {
-            background: #2d2e30;
+            font-size: 1.8rem;
+            color: #3c4043;
         }
         /* Message Bubbles */
         .message {
@@ -90,60 +67,64 @@
             word-wrap: break-word;
         }
         .user-message {
-            background: #2b2c2f;
-            color: #e3e3e3;
+            background: #e8f0fe;
+            color: #174ea6;
             align-self: flex-start;
-            border-bottom-right-radius: 4px;
         }
         .ai-message {
-            background: #1e1f20;
-            color: #e3e3e3;
+            background: #ffffff;
+            color: #202123;
             align-self: flex-end;
-            border: 1px solid #333;
-            border-bottom-left-radius: 4px;
+            border: 1px solid #e5e5e5;
         }
-        /* Bottom Input Area */
+        /* Bottom Input Area matching the screenshot */
         .input-container-wrapper {
             padding: 15px 20px;
-            background: #131314;
+            background: #f8f9fa;
             display: flex;
             justify-content: center;
         }
-        .input-container {
+        .input-box {
             display: flex;
             align-items: center;
-            background: #1e1f20;
-            border: 1px solid #333;
+            background: #ffffff;
+            border: 1px solid #dadce0;
             border-radius: 30px;
             padding: 8px 15px;
             width: 100%;
-            max-width: 800px;
+            max-width: 700px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .icon-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            color: #5f6368;
+            cursor: pointer;
+            padding: 5px 10px;
         }
         input {
             flex: 1;
             background: transparent;
             border: none;
             outline: none;
-            color: #e3e3e3;
+            color: #202123;
             font-size: 1rem;
             padding: 8px;
+            text-align: right;
         }
-        button {
-            background: #8ab4f8;
-            color: #131314;
+        .send-btn {
+            background: #1a73e8;
+            color: white;
             border: none;
             border-radius: 50%;
             width: 36px;
             height: 36px;
             cursor: pointer;
-            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
-        }
-        button:hover {
-            background: #aecbfa;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -154,34 +135,24 @@
     </header>
 
     <div class="chat-container" id="chatContainer">
-        <!-- Front Board / Welcome Section -->
         <div class="welcome-screen" id="welcomeScreen">
-            <h2>ہیلو، علی عثمان کنگ</h2>
-            <p>آج میں آپ کی کیا مدد کر سکتا ہوں؟</p>
-            <div class="suggestions-grid">
-                <div class="suggestion-card" onclick="sendPreset('ایک نیا بزنس آئیڈیا بتائیں')">بزنس آئیڈیاز دیکھیں</div>
-                <div class="suggestion-card" onclick="sendPreset('پنجابی میں ایک خوبصورت شعر سنائیں')">پنجابی شاعری</div>
-                <div class="suggestion-card" onclick="sendPreset('کوڈنگ میں مدد کریں')">کوڈنگ میں مدد</div>
-                <div class="suggestion-card" onclick="sendPreset('اپنے بارے میں بتاؤ')">اپنے بارے میں</div>
-            </div>
+            <h2>السلام علیکم، علی عثمان کنگ</h2>
+            <p>آج ہم کس چیز پر بات کریں؟</p>
         </div>
     </div>
 
     <div class="input-container-wrapper">
-        <div class="input-container">
+        <div class="input-box">
+            <button class="icon-btn" title="Add">＋</button>
             <input type="text" id="userInput" placeholder="Ask King Pro 6..." onkeypress="handleKeyPress(event)">
-            <button onclick="sendMessage()">➔</button>
+            <button class="icon-btn" title="Mic">🎤</button>
+            <button class="send-btn" onclick="sendMessage()">➔</button>
         </div>
     </div>
 
     <script>
         const apiKey = "AQ.Ab8RN6ImIZ2Oiy0WyfLUR0_ud4PvuZNxclU2PCN_yo4LfLSFXA";
         let isFirstMessage = true;
-
-        function sendPreset(text) {
-            document.getElementById("userInput").value = text;
-            sendMessage();
-        }
 
         async function sendMessage() {
             const inputField = document.getElementById("userInput");
@@ -191,13 +162,11 @@
 
             if (!text) return;
 
-            // Remove welcome screen on first message
             if (isFirstMessage && welcomeScreen) {
                 welcomeScreen.remove();
                 isFirstMessage = false;
             }
 
-            // User Message
             const userMsg = document.createElement("div");
             userMsg.className = "message user-message";
             userMsg.innerText = text;
@@ -206,7 +175,6 @@
             inputField.value = "";
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // AI Loading Message
             const aiMsg = document.createElement("div");
             aiMsg.className = "message ai-message";
             aiMsg.innerText = "سوچ رہا ہوں...";
