@@ -407,6 +407,7 @@
             font-size: 15px;
             color: #202124;
             line-height: 1.6;
+            white-space: pre-wrap;
         }
 
         .ai-actions {
@@ -534,7 +535,7 @@
                 <div class="sidebar-section-title">Recent</div>
                 <div class="recent-box">
                     <strong>No saved chats</strong><br>
-                    <span style="font-size: 12px;">Recent chats will appear here so that you can continue them later.</span>
+                    <span style="font-size: 12px;">Recent chats will appear here.</span>
                 </div>
             </div>
         </div>
@@ -664,12 +665,12 @@
         function startVoiceInput() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                alert("معذرت، آپ کا براؤزر وائس انपुट کو سپورٹ نہیں کرتا۔");
+                alert("معذرت، آپ کا براؤزر وائس ان پٹ کو سپورٹ نہیں کرتا۔");
                 return;
             }
 
             const recognition = new SpeechRecognition();
-            recognition.lang = 'ur-PK'; // اردو اور دیگر زبانوں کے لیے
+            recognition.lang = 'ur-PK'; 
             recognition.interimResults = false;
 
             const micBtn = document.getElementById('micBtn');
@@ -679,7 +680,7 @@
                 const speechText = event.results[0][0].transcript;
                 document.getElementById('userInput').value = speechText;
                 micBtn.classList.remove('recording');
-                handleUserSubmit(); // بولتے ہی خودکار طور پر سوال بھیج دے گا
+                handleUserSubmit(); 
             };
 
             recognition.onerror = function() {
@@ -699,18 +700,16 @@
             }
         }
 
-        // Handle sending message and generating AI response with Speaker, Copy, Like & Dislike
-        function handleUserSubmit() {
+        // Real AI Response using Gemini API
+        async function handleUserSubmit() {
             const inputField = document.getElementById('userInput');
             const query = inputField.value.trim();
             if (!query) return;
 
-            // Hide welcome screen and show chat stream
             document.getElementById('welcomeScreen').style.display = 'none';
             const chatStream = document.getElementById('chatStream');
             chatStream.style.display = 'flex';
 
-            // Append User Message
             const userMsgDiv = document.createElement('div');
             userMsgDiv.className = 'message-box';
             userMsgDiv.innerHTML = `<div class="user-msg">${query}</div>`;
@@ -719,12 +718,36 @@
             inputField.value = '';
             chatStream.scrollTop = chatStream.scrollHeight;
 
-            // Simulate AI Response
-            setTimeout(() => {
-                const aiResponseText = `یہ آپ کے سوال "${query}" کا بہترین اور درست جواب ہے۔ آپ اسے سن سکتے ہیں، کاپی کر سکتے ہیں یا فیڈبیک دے سکتے ہیں۔`;
+            // Loading message bubble
+            const aiMsgDiv = document.createElement('div');
+            aiMsgDiv.className = 'message-box';
+            aiMsgDiv.innerHTML = `
+                <div class="ai-msg-container">
+                    <div class="ai-text" id="loadingText">جواپ تیار کیا جا رہا ہے...</div>
+                </div>
+            `;
+            chatStream.appendChild(aiMsgDiv);
+            chatStream.scrollTop = chatStream.scrollHeight;
+
+            try {
+                // آپ یہاں اپنی جیمಿನಿ API Key درج کر سکتے ہیں
+                const apiKey = "YOUR_GEMINI_API_KEY"; 
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: query }] }]
+                    })
+                });
+
+                const data = await response.json();
+                let aiResponseText = "معذرت، کوئی جواب موصول نہیں ہوا۔";
                 
-                const aiMsgDiv = document.createElement('div');
-                aiMsgDiv.className = 'message-box';
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    aiResponseText = data.candidates[0].content.parts[0].text;
+                }
+
+                // Update the message box with the actual AI response, Speaker, Copy, and Feedback buttons
                 aiMsgDiv.innerHTML = `
                     <div class="ai-msg-container">
                         <div class="ai-text">${aiResponseText}</div>
@@ -736,25 +759,30 @@
                         </div>
                     </div>
                 `;
-                chatStream.appendChild(aiMsgDiv);
-                chatStream.scrollTop = chatStream.scrollHeight;
-            }, 600);
+            } catch (error) {
+                aiMsgDiv.innerHTML = `
+                    <div class="ai-msg-container">
+                        <div class="ai-text">انٹرنیٹ کنکشن کا مسئلہ ہے یا اے آئی کی کلید (API Key) درست درج نہیں ہے۔</div>
+                    </div>
+                `;
+            }
+            chatStream.scrollTop = chatStream.scrollHeight;
         }
 
-        // Text-to-Speech (Speaker Function - Reads any language automatically)
+        // Text-to-Speech (Speaker)
         function speakText(button) {
             const aiText = button.parentElement.previousElementSibling.innerText;
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop previous speech
+                window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(aiText);
-                utterance.lang = 'ur-PK'; // ڈیفولت زبان، براؤزر خود بخود متن کی زبان پہچان لیتاہے
+                utterance.lang = 'ur-PK'; 
                 window.speechSynthesis.speak(utterance);
             } else {
-                alert("آپ کا براؤزر ٹیکسٹ ٹو اسپیچ کو سپورٹ نہیں کرتا۔");
+                alert("آپ کا براؤزر اسپیچ کو سپورٹ نہیں کرتا۔");
             }
         }
 
-        // Copy Text Function
+        // Copy Text
         function copyText(button) {
             const aiText = button.parentElement.previousElementSibling.innerText;
             navigator.clipboard.writeText(aiText).then(() => {
@@ -762,17 +790,17 @@
             });
         }
 
-        // Like / Dislike Feedback Function
+        // Like / Dislike Feedback
         function reactFeedback(button, type) {
             const actionsDiv = button.parentElement;
             if (type === 'like') {
                 button.style.color = '#34a853';
                 actionsDiv.querySelector('button[title*="Dislike"]').style.color = '#5f6368';
-                alert("آپ کے ردعمل کا شکریہ! جواب درست مانا گیا۔");
+                alert("آپ کے ردعمل کا شکریہ!");
             } else {
                 button.style.color = '#ea4335';
                 actionsDiv.querySelector('button[title*="Like"]').style.color = '#5f6368';
-                alert("آپ کے ردعمل کا شکریہ! ہم اس جواب کو بہتر کرنے کی کوشش کریں گے۔");
+                alert("آپ کے ردعمل کا شکریہ! ہم اسے بہتر کریں گے۔");
             }
         }
     </script>
