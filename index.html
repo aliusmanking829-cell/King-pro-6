@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Super App - Advanced Sidebar</title>
+    <title>King-pro-6 AI Super App - ChatGPT & Gemini Hybrid</title>
     <style>
         * {
             margin: 0;
@@ -19,16 +19,105 @@
             --text-primary: #e3e3e3;
             --text-secondary: #c4c7c5;
             --accent-color: #8ab4f8;
-            --border-color: #3c4043;
+            --border-color: #444746;
             --hover-color: rgba(255, 255, 255, 0.08);
+            --gradient-primary: linear-gradient(135deg, #10a37f 0%, #4285f4 100%);
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
-            height: 100dvh;
+            height: 100vh;
             display: flex;
             overflow: hidden;
+        }
+
+        /* Splash Screen Overlay */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .splash-logo-container {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .ai-badge {
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        .chatgpt-badge {
+            background: linear-gradient(135deg, #10a37f, #0d8365);
+        }
+
+        .gemini-badge {
+            background: linear-gradient(135deg, #4285f4, #9b72cb);
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); opacity: 0.9; }
+            100% { transform: scale(1.05); opacity: 1; box-shadow: 0 12px 30px rgba(66, 133, 244, 0.5); }
+        }
+
+        .splash-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .splash-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .enter-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .enter-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        /* Main App Layout */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
         }
 
         .sidebar {
@@ -40,234 +129,128 @@
             justify-content: space-between;
             height: 100%;
             padding: 14px;
-            transition: transform 0.3s ease;
-            z-index: 100;
         }
 
-        .sidebar-top {
+        .main-chat-area {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            flex: 1;
-            overflow: hidden;
+            height: 100%;
+            background-color: var(--bg-color);
         }
 
-        .new-chat-btn {
-            background-color: var(--surface-color);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            padding: 12px 16px;
-            border-radius: 28px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 20px;
+            font-weight: bold;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            transition: background 0.2s;
+            align-items: center;
         }
 
-        .new-chat-btn:hover {
-            background-color: var(--hover-color);
-        }
-
-        .chat-search-wrapper {
-            position: relative;
-            margin-top: 4px;
-        }
-
-        .chat-search-input {
-            width: 100%;
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            padding: 8px 12px 8px 34px;
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 13px;
-            outline: none;
-        }
-
-        .chat-search-input:focus {
-            border-color: var(--accent-color);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .history-container {
+        .chat-body {
             flex: 1;
+            padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin-top: 10px;
-            padding-right: 4px;
+            gap: 15px;
         }
 
-        .history-section-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            padding-left: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .history-item {
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            color: var(--text-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: background 0.15s;
-        }
-
-        .history-item:hover {
-            background-color: var(--hover-color);
-        }
-
-        .history-item.active {
+        .welcome-card {
             background-color: var(--surface-color);
-            border-left: 3px solid var(--accent-color);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 16px;
+            max-width: 600px;
+            margin: auto;
+            text-align: center;
         }
 
-        .sidebar-bottom {
+        .welcome-card h2 {
+            margin-bottom: 12px;
+            color: var(--accent-color);
+        }
+
+        .chat-input-area {
+            padding: 20px;
             border-top: 1px solid var(--border-color);
-            padding-top: 12px;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .sidebar-footer-btn {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
             gap: 10px;
-            text-align: left;
-            transition: background 0.2s;
+            background-color: var(--bg-color);
         }
 
-        .sidebar-footer-btn:hover {
-            background-color: var(--hover-color);
+        .chat-input-area input {
+            flex: 1;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 14px 18px;
+            border-radius: 24px;
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
         }
 
-        .history-container::-webkit-scrollbar {
-            width: 5px;
-        }
-        .history-container::-webkit-scrollbar-thumb {
-            background-color: var(--border-color);
-            border-radius: 10px;
+        .chat-input-area button {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0 24px;
+            border-radius: 24px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-top">
-            <button class="new-chat-btn" onclick="createNewChat()">
-                <span style="display: flex; align-items: center; gap: 8px;">
-                    <span>✨</span> نئی چیٹ (New Chat)
-                </span>
-                <span>✏️</span>
-            </button>
-
-            <div class="chat-search-wrapper">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="chatSearch" class="chat-search-input" placeholder="پرانی چیٹس تلاش کریں..." onkeyup="searchChats()">
-            </div>
-
-            <div class="history-container" id="historyContainer">
-                <div class="history-section-title">آج (Today)</div>
-                <div class="history-list">
-                    <div class="history-item active" onclick="loadChat('1')">
-                        <span>👑 SardarJi AI Brand Logo Design</span>
-                    </div>
-                    <div class="history-item" onclick="loadChat('2')">
-                        <span>🎵 پنجابی ہپ ہاپ ٹریک پرامپٹ</span>
-                    </div>
-                </div>
-
-                <div class="history-section-title" style="margin-top: 8px;">پچھلے 7 دن (Previous 7 Days)</div>
-                <div class="history-list">
-                    <div class="history-item" onclick="loadChat('3')">
-                        <span>🚗 لگژری کار فوٹو شوٹ کانسیپٹ</span>
-                    </div>
-                    <div class="history-item" onclick="loadChat('4')">
-                        <span>💻 Python AI Script Code</span>
-                    </div>
-                    <div class="history-item" onclick="loadChat('5')">
-                        <span>📱 سائیڈ بار ڈیزائن اپڈیٹ</span>
-                    </div>
-                </div>
-            </div>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-logo-container">
+            <div class="ai-badge chatgpt-badge">ChatGPT</div>
+            <div style="font-size: 24px; font-weight: bold; color: var(--text-secondary);">+</div>
+            <div class="ai-badge gemini-badge">Gemini</div>
         </div>
+        <div class="splash-title">King-pro-6 AI Super App</div>
+        <div class="splash-subtitle">Powered by Advanced Hybrid Intelligence</div>
+        <button class="enter-btn" onclick="enterApp()">Get Started / ایپ شروع کریں</button>
+    </div>
 
-        <div class="sidebar-bottom">
-            <button class="sidebar-footer-btn" onclick="openSettings()">
-                <span>⚙️</span> ترتیبات اور پروفائل (Settings)
-            </button>
-            <button class="sidebar-footer-btn" onclick="clearAllHistory()" style="color: #f28b82;">
-                <span>🗑️</span> تمام ہسٹری صاف کریں
-            </button>
+    <!-- App Interface -->
+    <div class="app-container">
+        <div class="sidebar">
+            <div style="font-weight: bold; font-size: 16px; padding: 10px; color: var(--accent-color);">👑 King-pro-6</div>
+            <div style="color: var(--text-secondary); font-size: 13px; padding: 10px;">Your ultimate AI workspace combining world-class intelligence.</div>
+        </div>
+        <div class="main-chat-area">
+            <div class="chat-header">
+                <span>King-pro-6 Super Dashboard</span>
+                <span style="font-size: 12px; background: var(--surface-color); padding: 5px 12px; border-radius: 12px; border: 1px solid var(--border-color);">Online</span>
+            </div>
+            <div class="chat-body">
+                <div class="welcome-card">
+                    <h2>Welcome to King-pro-6! 🚀</h2>
+                    <p>خوش آمدید! آپ کی یہ ایپ ChatGPT और Gemini के بہترین فیچرز کے साथ تیار ہے۔ آپ یہاں अपनी مرضی के अनुसार چیٹ और اے آئی ٹولز इस्तेमाल कर सकते हैं।</p>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" placeholder="Type your message here..." />
+                <button>Send</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function createNewChat() {
-            alert('نئی چیٹ شروع ہو گئی ہے! اب آپ نیا سوال پوچھ سکتے ہیں۔');
-        }
-
-        function searchChats() {
-            const query = document.getElementById('chatSearch').value.toLowerCase();
-            const items = document.querySelectorAll('.history-item');
-            
-            items.forEach(item => {
-                const text = item.innerText.toLowerCase();
-                if (text.includes(query)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function loadChat(chatId) {
-            alert('چیٹ لوڈ ہو رہی ہے ID: ' + chatId);
-        }
-
-        function openSettings() {
-            alert('سیٹنگز پینل اوپن ہو رہا ہے...');
-        }
-
-        function clearAllHistory() {
-            if(confirm('کیا آپ واقعی تمام چیٹ ہسٹری مٹانا چاہتے ہیں؟')) {
-                document.getElementById('historyContainer').innerHTML = '<div style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 20px;">کوئی ہسٹری موجود نہیں</div>';
-            }
+        function enterApp() {
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+            setTimeout(() => {
+                splash.style.display = 'none';
+            }, 500);
         }
     </script>
 </body>
