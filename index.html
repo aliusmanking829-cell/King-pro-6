@@ -93,6 +93,15 @@
             align-items: center;
             justify-content: center;
         }
+        .icon-btn.recording {
+            color: #ea4335;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
         input {
             flex: 1;
             background: transparent;
@@ -155,7 +164,7 @@
     </div>
 
     <div class="input-bar-wrapper">
-        <!-- Plus Popup Menu matching your screenshot + Video feature -->
+        <!-- Plus Popup Menu -->
         <div class="features-menu" id="featuresMenu">
             <div class="feature-item" onclick="selectFeature('Upload files')"><span>📎</span> Upload files</div>
             <div class="feature-item" onclick="selectFeature('Add from Drive')"><span>📁</span> Add from Drive</div>
@@ -171,13 +180,14 @@
             <button class="icon-btn" title="Add" onclick="toggleMenu()">＋</button>
             <input type="text" id="userInput" placeholder="Ask Gemini" onkeypress="handleKeyPress(event)">
             <span class="model-badge">Flash-Lite ▾</span>
-            <button class="icon-btn" title="Voice">🎙️</button>
+            <button class="icon-btn" id="micBtn" title="Voice Search" onclick="toggleVoiceRecording()">🎙️</button>
         </div>
     </div>
 
     <script>
         const apiKey = "AQ.Ab8RN6ImIZ2Oiy0WyfLUR0_ud4PvuZNxclU2PCN_yo4LfLSFXA";
         let isFirstMessage = true;
+        let recognition = null;
 
         function toggleMenu() {
             const menu = document.getElementById("featuresMenu");
@@ -189,6 +199,53 @@
             inputField.value = featureName + " کے بارے میں مدد کریں: ";
             toggleMenu();
             inputField.focus();
+        }
+
+        // Voice Recording Implementation using Speech Recognition API
+        function toggleVoiceRecording() {
+            const micBtn = document.getElementById("micBtn");
+            const inputField = document.getElementById("userInput");
+
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("آپ کا براؤزر وائس ریکارڈنگ کو سپورٹ نہیں کرتا۔");
+                return;
+            }
+
+            if (!recognition) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'ur-PK'; // Urdu language support
+                recognition.interimResults = false;
+
+                recognition.onstart = function() {
+                    micBtn.classList.add("recording");
+                    inputField.placeholder = "سن رہا ہوں... بولیں";
+                };
+
+                recognition.onresult = function(event) {
+                    const speechToText = event.results[0][0].transcript;
+                    inputField.value = speechToText;
+                    micBtn.classList.remove("recording");
+                    inputField.placeholder = "Ask Gemini";
+                    sendMessage(); // Automatically send message after voice input
+                };
+
+                recognition.onerror = function() {
+                    micBtn.classList.remove("recording");
+                    inputField.placeholder = "Ask Gemini";
+                };
+
+                recognition.onend = function() {
+                    micBtn.classList.remove("recording");
+                    inputField.placeholder = "Ask Gemini";
+                };
+            }
+
+            try {
+                recognition.start();
+            } catch (e) {
+                recognition.stop();
+            }
         }
 
         async function sendMessage() {
