@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Pro 6 - AI Super App</title>
+    <title>King Pro 6 - Step 1</title>
     <style>
         * {
             margin: 0;
@@ -17,10 +17,6 @@
             --nav-bg: #ffffff;
             --border-color: #e0e2e5;
             --box-bg: #ffffff;
-            --user-msg-bg: #d3e3fd;
-            --user-msg-text: #041e49;
-            --ai-msg-bg: #ffffff;
-            --hover-bg: #e9ecef;
         }
         body.dark-mode {
             --bg-color: #131314;
@@ -28,10 +24,6 @@
             --nav-bg: #1e1f20;
             --border-color: #333537;
             --box-bg: #1e1f20;
-            --user-msg-bg: #004a77;
-            --user-msg-text: #ffffff;
-            --ai-msg-bg: #1e1f20;
-            --hover-bg: #2d2e30;
         }
         body {
             background-color: var(--bg-color);
@@ -50,666 +42,59 @@
             background: var(--nav-bg);
             border-bottom: 1px solid var(--border-color);
         }
-        .top-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .top-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .menu-toggle-btn, .theme-toggle-btn, .lang-toggle-btn {
-            background: transparent;
-            border: none;
-            font-size: 1rem;
-            cursor: pointer;
-            color: var(--text-color);
-            padding: 5px 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-        }
-        .menu-toggle-btn {
-            font-size: 1.3rem;
-            border: none;
-            padding: 0;
-        }
         .app-title {
             font-size: 1.1rem;
             font-weight: 500;
         }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            background: var(--nav-bg);
-            border-right: 1px solid var(--border-color);
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            transition: left 0.3s ease;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            padding: 20px 15px;
-            gap: 10px;
-        }
-        html[dir="ltr"] .sidebar {
-            left: auto;
-            right: -280px;
-            border-right: none;
-            border-left: 1px solid var(--border-color);
-            transition: right 0.3s ease;
-        }
-        html[dir="ltr"] .sidebar.open {
-            right: 0;
-            left: auto;
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .close-sidebar {
+        .theme-toggle-btn {
             background: transparent;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--text-color);
-        }
-        .sidebar-item {
-            padding: 10px 14px;
-            font-size: 0.95rem;
-            color: var(--text-color);
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: background 0.2s;
-        }
-        .sidebar-item:hover {
-            background: var(--hover-bg);
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
-            display: none;
-            z-index: 999;
-        }
-        .sidebar-overlay.active {
-            display: block;
-        }
-
-        .chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 800px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        .welcome-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            flex: 1;
-            text-align: center;
-            gap: 10px;
-        }
-        .welcome-screen h2 {
-            font-size: 1.8rem;
-            font-weight: 400;
-        }
-        .message {
-            max-width: 85%;
-            padding: 12px 18px;
-            border-radius: 16px;
-            line-height: 1.6;
-            word-wrap: break-word;
-        }
-        .user-message {
-            background: var(--user-msg-bg);
-            color: var(--user-msg-text);
-            align-self: flex-start;
-        }
-        .ai-message {
-            background: var(--ai-msg-bg);
-            color: var(--text-color);
-            align-self: flex-end;
             border: 1px solid var(--border-color);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .media-preview {
-            margin-top: 10px;
-            max-width: 100%;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-        .media-preview img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .input-bar-wrapper {
-            width: 100%;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: center;
-            position: relative;
-            background: var(--bg-color);
-        }
-        .input-box {
-            display: flex;
-            align-items: center;
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 32px;
-            padding: 10px 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            gap: 12px;
-            width: 100%;
-            max-width: 750px;
-        }
-        .icon-btn {
-            background: transparent;
-            border: none;
-            font-size: 1.2rem;
-            color: var(--text-color);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .icon-btn.recording {
-            color: #ea4335;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-        input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: var(--text-color);
-            font-size: 1rem;
-        }
-
-        .model-selector-container {
-            position: relative;
-        }
-        .model-badge {
-            font-size: 0.85rem;
-            color: var(--text-color);
-            background: var(--bg-color);
             padding: 6px 12px;
             border-radius: 8px;
-            border: 1px solid var(--border-color);
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .model-menu {
-            position: absolute;
-            bottom: 45px;
-            right: 0;
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-            display: none;
-            flex-direction: column;
-            width: 260px;
-            padding: 8px 0;
-            z-index: 100;
-        }
-        html[dir="ltr"] .model-menu {
-            right: auto;
-            left: 0;
-        }
-        .model-menu.active {
-            display: flex;
-        }
-        .model-item {
-            padding: 10px 16px;
-            font-size: 0.9rem;
             color: var(--text-color);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            transition: background 0.2s;
-        }
-        .model-item:hover {
-            background: var(--hover-bg);
-        }
-        .model-item span {
-            font-size: 0.75rem;
-            color: #8e918f;
-        }
-
-        .features-menu {
-            position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-            display: none;
-            flex-direction: column;
-            width: 250px;
-            padding: 10px 0;
-            z-index: 100;
-        }
-        .features-menu.active {
-            display: flex;
-        }
-        .feature-item {
-            padding: 10px 16px;
             font-size: 0.9rem;
-            color: var(--text-color);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
-        .feature-item:hover {
-            background: var(--hover-bg);
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .main-container h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+        .main-container p {
+            color: #707579;
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
 
     <div class="top-nav">
-        <div class="top-left">
-            <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
-            <span class="app-title" id="appTitle">King Pro 6</span>
-        </div>
-        <div class="top-right">
-            <button class="lang-toggle-btn" id="langBtn" onclick="toggleLanguage()">اردو / English</button>
-            <button class="theme-toggle-btn" onclick="toggleDarkMode()" title="Dark/Light Mode">🌙</button>
-        </div>
+        <span class="app-title">King Pro 6</span>
+        <button class="theme-toggle-btn" onclick="toggleDarkMode()">🌙 ڈार्क मोड</button>
     </div>
 
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3 id="menuTitle">Menu</h3>
-            <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
-        </div>
-        <div class="sidebar-item" onclick="startNewChat()">✏️ <span id="navNewChat">New chat</span></div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Images')">🖼️ <span id="navImages">Images</span></div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Library')">📚 <span id="navLibrary">Library</span></div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Scheduled')">⏰ <span id="navScheduled">Scheduled</span></div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Plugins')">🔌 <span id="navPlugins">Plugins</span></div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Projects')">📁 <span id="navProjects">Projects</span></div>
-        <div class="sidebar-item" onclick="selectSidebarOption('Codex')">💻 <span id="navCodex">Codex</span></div>
-        <div class="sidebar-item" onclick="selectSidebarOption('More')">⋯ <span id="navMore">More</span></div>
-    </div>
-
-    <div class="chat-container" id="chatContainer">
-        <div class="welcome-screen" id="welcomeScreen">
-            <h2 id="welcomeText">The mic is yours, Ali</h2>
-        </div>
-    </div>
-
-    <div class="input-bar-wrapper">
-        <div class="features-menu" id="featuresMenu">
-            <div class="feature-item" onclick="selectFeature('Upload files')">📎 <span id="ftUpload">Upload files</span></div>
-            <div class="feature-item" onclick="selectFeature('Create image')">🖼️ <span id="ftImage">Create image</span></div>
-            <div class="feature-item" onclick="selectFeature('Create video')">🎬 <span id="ftVideo">Create video</span></div>
-            <div class="feature-item" onclick="selectFeature('Canvas')">🎨 <span id="ftCanvas">Canvas</span></div>
-        </div>
-
-        <div class="model-menu" id="modelMenu">
-            <div class="model-item" onclick="selectModel('3.5 Flash-Lite')">
-                <strong>3.5 Flash-Lite</strong>
-                <span id="m1Desc">Fastest answers</span>
-            </div>
-            <div class="model-item" onclick="selectModel('3.6 Flash')">
-                <strong>3.6 Flash (New)</strong>
-                <span id="m2Desc">All-around help</span>
-            </div>
-            <div class="model-item" onclick="selectModel('3.1 Pro')">
-                <strong>3.1 Pro</strong>
-                <span id="m3Desc">Advanced reasoning</span>
-            </div>
-            <div class="model-item" onclick="selectModel('Extended thinking')">
-                <strong id="m4Title">Extended thinking</strong>
-                <span id="m4Desc">Complex problem solving</span>
-            </div>
-        </div>
-
-        <div class="input-box">
-            <button class="icon-btn" title="Add" onclick="togglePlusMenu()">＋</button>
-            <input type="text" id="userInput" placeholder="King Pro 6" onkeypress="handleKeyPress(event)">
-            
-            <div class="model-selector-container">
-                <div class="model-badge" id="currentModel" onclick="toggleModelMenu()">
-                    Flash-Lite ▾
-                </div>
-            </div>
-
-            <button class="icon-btn" id="micBtn" title="Voice Search" onclick="toggleVoiceRecording()">🎙️</button>
-        </div>
+    <div class="main-container">
+        <h1>خوش آمدید، علی بھائی!</h1>
+        <p>King Pro 6 का Step 1 (Core Layout) सफलताપूर्वक तैयार है।</p>
     </div>
 
     <script>
-        let recognition = null;
-        let currentLang = 'en';
-
-        const translations = {
-            en: {
-                welcome: "The mic is yours, Ali",
-                placeholder: "King Pro 6",
-                menu: "Menu",
-                newChat: "New chat",
-                images: "Images",
-                library: "Library",
-                scheduled: "Scheduled",
-                plugins: "Plugins",
-                projects: "Projects",
-                codex: "Codex",
-                more: "More",
-                upload: "Upload files",
-                createImg: "Create image",
-                createVid: "Create video",
-                canvas: "Canvas",
-                m1: "Fastest answers",
-                m2: "All-around help",
-                m3: "Advanced reasoning",
-                m4t: "Extended thinking",
-                m4: "Complex problem solving",
-                langLabel: "اردو"
-            },
-            ur: {
-                welcome: "مائیک آپ کا ہے، علی",
-                placeholder: "کنگ پرو 6",
-                menu: "مینو",
-                newChat: "نئی چیٹ",
-                images: "تصاویر",
-                library: "لائبریری",
-                scheduled: "شیڈولڈ",
-                plugins: "پلگ انز",
-                projects: "پراجیکٹس",
-                codex: "کوڈیکس",
-                more: "مزید",
-                upload: "فائلیں اپ لوڈ کریں",
-                createImg: "تصویر بنائیں",
-                createVid: "ویڈیو بنائیں",
-                canvas: "کینوس",
-                m1: "سب سے تیز جوابات",
-                m2: "ہر قسم کی مدد",
-                m3: "اعلی درجے کی استدلال",
-                m4t: "تفصیلی سوچ",
-                m4: "پیچیدہ مسائل کا حل",
-                langLabel: "English"
-            }
-        };
-
-        window.onload = function() {
-            loadChatHistory();
-            if(localStorage.getItem("darkMode") === "enabled") {
-                document.body.classList.add("dark-mode");
-                document.querySelector(".theme-toggle-btn").innerText = "☀️";
-            }
-            if(localStorage.getItem("appLang")) {
-                currentLang = localStorage.getItem("appLang");
-                updateLanguageUI();
-            }
-        };
-
-        function toggleLanguage() {
-            currentLang = currentLang === 'en' ? 'ur' : 'en';
-            localStorage.setItem("appLang", currentLang);
-            updateLanguageUI();
-        }
-
-        function updateLanguageUI() {
-            const t = translations[currentLang];
-            const root = document.getElementById("htmlRoot");
-            
-            if(currentLang === 'ur') {
-                root.setAttribute("dir", "rtl");
-                root.setAttribute("lang", "ur");
-            } else {
-                root.setAttribute("dir", "ltr");
-                root.setAttribute("lang", "en");
-            }
-
-            document.getElementById("langBtn").innerText = t.langLabel;
-            document.getElementById("menuTitle").innerText = t.menu;
-            document.getElementById("navNewChat").innerText = t.newChat;
-            document.getElementById("navImages").innerText = t.images;
-            document.getElementById("navLibrary").innerText.innerText = t.library;
-            document.getElementById("navScheduled").innerText = t.scheduled;
-            document.getElementById("navPlugins").innerText = t.plugins;
-            document.getElementById("navProjects").innerText = t.projects;
-            document.getElementById("navCodex").innerText = t.codex;
-            document.getElementById("navMore").innerText = t.more;
-            
-            document.getElementById("ftUpload").innerText = t.upload;
-            document.getElementById("ftImage").innerText = t.createImg;
-            document.getElementById("ftVideo").innerText = t.createVid;
-            document.getElementById("ftCanvas").innerText = t.canvas;
-
-            document.getElementById("m1Desc").innerText = t.m1;
-            document.getElementById("m2Desc").innerText = t.m2;
-            document.getElementById("m3Desc").innerText = t.m3;
-            document.getElementById("m4Title").innerText = t.m4t;
-            document.getElementById("m4Desc").innerText = t.m4;
-
-            document.getElementById("userInput").placeholder = t.placeholder;
-            
-            const welcomeText = document.getElementById("welcomeText");
-            if(welcomeText) {
-                welcomeText.innerText = t.welcome;
-            }
-        }
-
         function toggleDarkMode() {
             document.body.classList.toggle("dark-mode");
             const btn = document.querySelector(".theme-toggle-btn");
             if(document.body.classList.contains("dark-mode")) {
-                localStorage.setItem("darkMode", "enabled");
-                btn.innerText = "☀️";
+                btn.innerText = "☀️ لائট موڈ";
             } else {
-                localStorage.setItem("darkMode", "disabled");
-                btn.innerText = "🌙";
-            }
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById("sidebar");
-            const overlay = document.getElementById("sidebarOverlay");
-            sidebar.classList.toggle("open");
-            overlay.classList.toggle("active");
-        }
-
-        function startNewChat() {
-            localStorage.removeItem("kingProChatHistory");
-            const t = translations[currentLang];
-            document.getElementById("chatContainer").innerHTML = `
-                <div class="welcome-screen" id="welcomeScreen">
-                    <h2 id="welcomeText">${t.welcome}</h2>
-                </div>
-            `;
-            toggleSidebar();
-        }
-
-        function selectSidebarOption(optionName) {
-            alert(optionName + " select kiya gaya hai.");
-            toggleSidebar();
-        }
-
-        function togglePlusMenu() {
-            const menu = document.getElementById("featuresMenu");
-            const modelMenu = document.getElementById("modelMenu");
-            modelMenu.classList.remove("active");
-            menu.classList.toggle("active");
-        }
-
-        function toggleModelMenu() {
-            const modelMenu = document.getElementById("modelMenu");
-            const menu = document.getElementById("featuresMenu");
-            menu.classList.remove("active");
-            modelMenu.classList.toggle("active");
-        }
-
-        function selectModel(modelName) {
-            document.getElementById("currentModel").innerHTML = modelName + " ▾";
-            toggleModelMenu();
-        }
-
-        function selectFeature(featureName) {
-            const inputField = document.getElementById("userInput");
-            inputField.value = featureName + " ke liye madad karein: ";
-            togglePlusMenu();
-            inputField.focus();
-        }
-
-        function toggleVoiceRecording() {
-            const micBtn = document.getElementById("micBtn");
-            const inputField = document.getElementById("userInput");
-
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("Aapka browser voice recording support nahi karta.");
-                return;
-            }
-
-            if (!recognition) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                recognition = new SpeechRecognition();
-                recognition.lang = currentLang === 'ur' ? 'ur-PK' : 'en-US';
-                recognition.interimResults = false;
-
-                recognition.onstart = function() {
-                    micBtn.classList.add("recording");
-                    inputField.placeholder = currentLang === 'ur' ? "سن رہا ہوں..." : "Listening...";
-                };
-
-                recognition.onresult = function(event) {
-                    inputField.value = event.results[0][0].transcript;
-                    micBtn.classList.remove("recording");
-                    inputField.placeholder = translations[currentLang].placeholder;
-                    sendMessage();
-                };
-
-                recognition.onerror = function() {
-                    micBtn.classList.remove("recording");
-                    inputField.placeholder = translations[currentLang].placeholder;
-                };
-
-                recognition.onend = function() {
-                    micBtn.classList.remove("recording");
-                    inputField.placeholder = translations[currentLang].placeholder;
-                };
-            }
-
-            try {
-                recognition.start();
-            } catch (e) {
-                recognition.stop();
-            }
-        }
-
-        function saveMessageToLocalStorage(sender, text, mediaHtml = "") {
-            let history = JSON.parse(localStorage.getItem("kingProChatHistory")) ||_[];
-            history.push({ sender, text, mediaHtml });
-            localStorage.setItem("kingProChatHistory", JSON.stringify(history));
-        }
-
-        function loadChatHistory() {
-            let history = JSON.parse(localStorage.getItem("kingProChatHistory"));
-            if (history && history.length > 0) {
-                const chatContainer = document.getElementById("chatContainer");
-                chatContainer.innerHTML = "";
-                history.forEach(item => {
-                    const msgDiv = document.createElement("div");
-                    msgDiv.className = `message ${item.sender === 'user' ? 'user-message' : 'ai-message'}`;
-                    msgDiv.innerHTML = item.text + (item.mediaHtml || "");
-                    chatContainer.appendChild(msgDiv);
-                });
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
-        }
-
-        async function sendMessage() {
-            const inputField = document.getElementById("userInput");
-            const chatContainer = document.getElementById("chatContainer");
-            const welcomeScreen = document.getElementById("welcomeScreen");
-            const text = inputField.value.trim();
-
-            if (!text) return;
-
-            if (welcomeScreen) {
-                welcomeScreen.remove();
-            }
-
-            const userMsg = document.createElement("div");
-            userMsg.className = "message user-message";
-            userMsg.innerText = text;
-            chatContainer.appendChild(userMsg);
-            saveMessageToLocalStorage('user', text);
-            
-            inputField.value = "";
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            const aiMsg = document.createElement("div");
-            aiMsg.className = "message ai-message";
-            aiMsg.innerText = currentLang === 'ur' ? "سوچ رہا ہوں..." : "Thinking...";
-            chatContainer.appendChild(aiMsg);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            // Simulate instant smart responses to prevent any network/CORS failure errors
-            setTimeout(() => {
-                let replyText = "";
-                let mediaHtml = "";
-                const lowerText = text.toLowerCase();
-
-                if (lowerText.includes("hi") || lowerText.includes("hello") || lowerText.includes("سلام")) {
-                    replyText = currentLang === 'ur' ? "وعلیکم السلام! علی بھائی، بتائیں King Pro 6 میں آپ کی کیا مدد کر سکتا ہوں؟" : "Hello Ali! How can I assist you with King Pro 6 today?";
-                } else if (lowerText.includes("create image") || lowerText.includes("تصویر")) {
-                    replyText = currentLang === 'ur' ? "یہ لیجیے آپ کی فرمائش پر تیار کردہ تصویر:" : "Here is the image generated based on your request:";
-                    mediaHtml = `<div class="media-preview"><img src="https://picsum.photos/400/250" alt="Generated Image"></div>`;
-                } else {
-                    replyText = currentLang === 'ur' ? `موصول ہوا: "${text}"۔ King Pro 6 اس پر بہترین طریقے سے کام کر رہا ہے!` : `Received: "${text}". King Pro 6 is processing your request seamlessly!`;
-                }
-
-                aiMsg.innerHTML = replyText + mediaHtml;
-                saveMessageToLocalStorage('ai', replyText, mediaHtml);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 800);
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === "Enter") {
-                sendMessage();
+                btn.innerText = "🌙 ڈार्क मोड";
             }
         }
     </script>
