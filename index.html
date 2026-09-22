@@ -386,7 +386,7 @@
     <!-- API Key Modal -->
     <div class="popup-overlay" id="apiOverlay" onclick="openApiModal()"></div>
     <div class="api-modal" id="apiModal">
-        <h3>اپنی Google Gemini API Key درج کریں</h3>
+        <h3>अपनी Google Gemini API Key درج کریں</h3>
         <p style="font-size: 0.85rem; color: #707579; margin-top: 5px;">یہ آپ کے براؤزر میں محفوظ رہے گی تاکہ حقیقی جواب مل سکیں۔</p>
         <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
         <button class="save-api-btn" onclick="saveApiKey()">محفوظ کریں (Save)</button>
@@ -462,7 +462,7 @@
                 openApiModal();
                 alert("API Key کامیابی سے محفوظ ہو گئی ہے!");
             } else {
-                alert("براہ کرम درست API Key درج کریں۔");
+                alert("براہ کرم درست API Key درج کریں۔");
             }
         }
 
@@ -566,8 +566,8 @@
                 actionsDiv.className = "ai-actions";
                 actionsDiv.innerHTML = `
                     <button class="action-btn" onclick="speakText(this)">🔊 سنیں (Audio)</button>
-                    <button class="action-btn" onclick="alert('شکریہ! فیڈबैक نوٹ کر لیا گیا: صحیح')">👍 صحیح</button>
-                    <button class="action-btn" onclick="alert('شکریہ! فیڈबैक نوٹ کر لیا गया: गलत')">👎 غلط</button>
+                    <button class="action-btn" onclick="alert('شکریہ! فیڈبیک نوٹ کر لیا گیا: صحیح')">👍 صحیح</button>
+                    <button class="action-btn" onclick="alert('شکریہ! فیڈبیک نوٹ کر لیا گیا: غلط')">👎 غلط</button>
                 `;
                 wrapper.appendChild(actionsDiv);
             }
@@ -587,7 +587,7 @@
         // Voice Input Function (Speech to Text)
         function startVoiceInput() {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("آپ کا براؤزر وائس ان پٹ سپورट ਨਹੀਂ करता۔");
+                alert("آپ کا براؤزر وائس ان پٹ سپورٹ نہیں کرتا۔");
                 return;
             }
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -612,7 +612,7 @@
             recognition.start();
         }
 
-        // Real Gemini API Call Function
+        // Real Gemini API Call Function with updated stable model
         async function sendMessage() {
             const inputField = document.getElementById("userInput");
             const chatContainer = document.getElementById("chatContainer");
@@ -632,12 +632,12 @@
 
             const apiKey = localStorage.getItem("kingProApiKey");
             if (!apiKey) {
-                alert("پہले اپنی Gemini API Key درج کریں (اوپر دائیں طرف کلک کریں)۔");
+                alert("پہلے اپنی Gemini API Key درج کریں (اوپر دائیں طرف کلک کریں)۔");
                 openApiModal();
                 return;
             }
 
-            // Real API Request to Gemini
+            // Updated API URL using gemini-1.5-flash
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
             
             try {
@@ -654,21 +654,22 @@
                 if (data.candidates && data.candidates[0].content.parts[0].text) {
                     const aiReply = data.candidates[0].content.parts[0].text;
                     
-                    // Optional demo image integration if user asks for pictures/countries/objects
                     let demoImage = "";
                     const lowerText = text.toLowerCase();
-                    if (lowerText.includes("image") || lowerText.includes("pakistan") || lowerText.includes("photo") || lowerText.includes("تکویرا") || lowerText.includes("تصویر")) {
-                        demoImage = "https://picsum.photos/600/350"; // Sample dynamic image placeholder
+                    if (lowerText.includes("image") || lowerText.includes("pakistan") || lowerText.includes("photo") || lowerText.includes("تصویر")) {
+                        demoImage = "https://picsum.photos/600/350";
                     }
 
                     appendMessageToDOM('ai', aiReply, demoImage);
                     saveMessageToLocalStorage('ai', aiReply, demoImage);
                 } else {
+                    console.error("API Error Response:", data);
                     const errorMsg = "معذرت، API سے درست جواب موصول نہیں ہوا۔ براہ کرم اپنی Key چیک کریں۔";
                     appendMessageToDOM('ai', errorMsg);
                     saveMessageToLocalStorage('ai', errorMsg);
                 }
             } catch (error) {
+                console.error("Network or Fetch Error:", error);
                 const netErrorMsg = "انٹرنیٹ کنکشن یا API میں خرابی پیش آئی ہے۔";
                 appendMessageToDOM('ai', netErrorMsg);
                 saveMessageToLocalStorage('ai', netErrorMsg);
