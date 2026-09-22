@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Pro 6 - Step 1</title>
+    <title>King Pro 6 - Step 2</title>
     <style>
         * {
             margin: 0;
@@ -16,14 +16,14 @@
             --text-color: #1f1f1f;
             --nav-bg: #ffffff;
             --border-color: #e0e2e5;
-            --box-bg: #ffffff;
+            --hover-bg: #e9ecef;
         }
         body.dark-mode {
             --bg-color: #131314;
             --text-color: #e3e3e3;
             --nav-bg: #1e1f20;
             --border-color: #333537;
-            --box-bg: #1e1f20;
+            --hover-bg: #2d2e30;
         }
         body {
             background-color: var(--bg-color);
@@ -42,11 +42,12 @@
             background: var(--nav-bg);
             border-bottom: 1px solid var(--border-color);
         }
-        .app-title {
-            font-size: 1.1rem;
-            font-weight: 500;
+        .top-left, .top-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .theme-toggle-btn {
+        .menu-toggle-btn, .theme-toggle-btn, .lang-toggle-btn {
             background: transparent;
             border: 1px solid var(--border-color);
             padding: 6px 12px;
@@ -55,6 +56,89 @@
             color: var(--text-color);
             font-size: 0.9rem;
         }
+        .menu-toggle-btn {
+            font-size: 1.2rem;
+            border: none;
+            padding: 2px 6px;
+        }
+        .app-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: var(--nav-bg);
+            border-right: 1px solid var(--border-color);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+            gap: 8px;
+        }
+        html[dir="ltr"] .sidebar {
+            left: auto;
+            right: -280px;
+            border-right: none;
+            border-left: 1px solid var(--border-color);
+            transition: right 0.3s ease;
+        }
+        html[dir="ltr"] .sidebar.open {
+            right: 0;
+            left: auto;
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .close-sidebar {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+        .sidebar-item {
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        .sidebar-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 999;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+
         .main-container {
             flex: 1;
             display: flex;
@@ -77,24 +161,76 @@
 </head>
 <body>
 
+    <!-- Top Navigation -->
     <div class="top-nav">
-        <span class="app-title">King Pro 6</span>
-        <button class="theme-toggle-btn" onclick="toggleDarkMode()">🌙 ڈार्क मोड</button>
+        <div class="top-left">
+            <button class="menu-toggle-btn" onclick="toggleSidebar()">☰</button>
+            <span class="app-title" id="appTitle">King Pro 6</span>
+        </div>
+        <div class="top-right">
+            <button class="lang-toggle-btn" id="langBtn" onclick="toggleLanguage()">اردو / English</button>
+            <button class="theme-toggle-btn" onclick="toggleDarkMode()">🌙</button>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3 id="menuTitle">مینو</h3>
+            <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
+        </div>
+        <div class="sidebar-item" onclick="alert('नया चैट शुरू किया गया')">✏️ <span id="navNewChat">نئی چیٹ</span></div>
+        <div class="sidebar-item" onclick="alert('तस्वीरें')">🖼️ <span id="navImages">تصاویر</span></div>
+        <div class="sidebar-item" onclick="alert('लाइब्रेरी')">📚 <span id="navLibrary">لائبریری</span></div>
+        <div class="sidebar-item" onclick="alert('प्लगइन्स')">🔌 <span id="navPlugins">پلگ انز</span></div>
     </div>
 
     <div class="main-container">
-        <h1>خوش آمدید، علی بھائی!</h1>
-        <p>King Pro 6 का Step 1 (Core Layout) सफलताપूर्वक तैयार है।</p>
+        <h1 id="welcomeHeading">خوش آمدید، علی بھائی!</h1>
+        <p id="welcomeText">King Pro 6 का Step 2 (Sidebar & Navigation) तैयार है।</p>
     </div>
 
     <script>
+        let currentLang = 'ur';
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
         function toggleDarkMode() {
             document.body.classList.toggle("dark-mode");
             const btn = document.querySelector(".theme-toggle-btn");
-            if(document.body.classList.contains("dark-mode")) {
-                btn.innerText = "☀️ لائট موڈ";
+            btn.innerText = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ur' ? 'en' : 'ur';
+            const root = document.getElementById("htmlRoot");
+            
+            if(currentLang === 'en') {
+                root.setAttribute("dir", "ltr");
+                root.setAttribute("lang", "en");
+                document.getElementById("menuTitle").innerText = "Menu";
+                document.getElementById("navNewChat").innerText = "New chat";
+                document.getElementById("navImages").innerText = "Images";
+                document.getElementById("navLibrary").innerText = "Library";
+                document.getElementById("navPlugins").innerText = "Plugins";
+                document.getElementById("welcomeHeading").innerText = "Welcome, Ali!";
+                document.getElementById("welcomeText").innerText = "King Pro 6 Step 2 is ready.";
             } else {
-                btn.innerText = "🌙 ڈार्क मोड";
+                root.setAttribute("dir", "rtl");
+                root.setAttribute("lang", "ur");
+                document.getElementById("menuTitle").innerText = "مینو";
+                document.getElementById("navNewChat").innerText = "نئی چیٹ";
+                document.getElementById("navImages").innerText = "تصاویر";
+                document.getElementById("navLibrary").innerText = "لائبریری";
+                document.getElementById("navPlugins").innerText = "پلگ انز";
+                document.getElementById("welcomeHeading").innerText = "خوش آمدید، علی بھائی!";
+                document.getElementById("welcomeText").innerText = "King Pro 6 का Step 2 (Sidebar & Navigation) तैयार है।";
             }
         }
     </script>
