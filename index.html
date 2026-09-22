@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Pro 6 - Updated Input</title>
+    <title>King Pro 6 - Complete Features</title>
     <style>
         * {
             margin: 0;
@@ -21,7 +21,8 @@
             --user-msg-text: #041e49;
             --ai-msg-bg: #ffffff;
             --hover-bg: #e9ecef;
-            --mic-bg: #c2e7ff;
+            --popup-bg: #ffffff;
+            --popup-shadow: rgba(0, 0, 0, 0.15);
         }
         body.dark-mode {
             --bg-color: #131314;
@@ -33,7 +34,8 @@
             --user-msg-text: #ffffff;
             --ai-msg-bg: #1e1f20;
             --hover-bg: #2d2e30;
-            --mic-bg: #004a77;
+            --popup-bg: #28292a;
+            --popup-shadow: rgba(0, 0, 0, 0.5);
         }
         body {
             background-color: var(--bg-color);
@@ -135,17 +137,17 @@
             background: var(--hover-bg);
         }
 
-        .sidebar-overlay {
+        .sidebar-overlay, .popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.2);
             display: none;
             z-index: 999;
         }
-        .sidebar-overlay.active {
+        .sidebar-overlay.active, .popup-overlay.active {
             display: block;
         }
 
@@ -197,13 +199,14 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        /* Input Bar (Updated like reference image) */
+        /* Input Bar & Popup Menu */
         .input-bar-wrapper {
             width: 100%;
             padding: 15px 20px;
             display: flex;
             justify-content: center;
             background: var(--bg-color);
+            position: relative;
         }
         .input-box {
             display: flex;
@@ -216,6 +219,7 @@
             gap: 10px;
             width: 100%;
             max-width: 750px;
+            position: relative;
         }
         .icon-btn {
             background: transparent;
@@ -234,10 +238,6 @@
         .icon-btn:hover {
             background: var(--hover-bg);
         }
-        .mic-active-btn {
-            background: var(--mic-bg);
-            color: var(--text-color);
-        }
         input {
             flex: 1;
             background: transparent;
@@ -246,6 +246,48 @@
             color: var(--text-color);
             font-size: 1rem;
             padding: 0 5px;
+        }
+
+        /* Plus Feature Popup Menu */
+        .plus-popup-menu {
+            position: absolute;
+            bottom: 75px;
+            left: 20px;
+            background: var(--popup-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px var(--popup-shadow);
+            width: 260px;
+            display: none;
+            flex-direction: column;
+            padding: 8px;
+            z-index: 1001;
+        }
+        html[dir="ltr"] .plus-popup-menu {
+            left: 20px;
+            right: auto;
+        }
+        .plus-popup-menu.active {
+            display: flex;
+        }
+        .popup-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .popup-item:hover {
+            background: var(--hover-bg);
+        }
+        .popup-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 6px 0;
         }
     </style>
 </head>
@@ -285,13 +327,27 @@
         </div>
     </div>
 
-    <!-- Input Bar (Ask King Pro Style) -->
+    <!-- Input Bar & Plus Popup Menu -->
     <div class="input-bar-wrapper">
+        <div class="popup-overlay" id="popupOverlay" onclick="togglePlusMenu()"></div>
+        
+        <!-- Plus Popup Menu -->
+        <div class="plus-popup-menu" id="plusPopupMenu">
+            <div class="popup-item" onclick="selectFeature('Upload files')">📁 <span id="menuUpload">Upload files</span></div>
+            <div class="popup-item" onclick="selectFeature('Add from Drive')">☁️ <span id="menuDrive">Add from Drive</span></div>
+            <div class="popup-item" onclick="selectFeature('More uploads')">⋯ <span id="menuMore">More uploads</span></div>
+            <div class="popup-divider"></div>
+            <div class="popup-item" onclick="selectFeature('Create image')">🖼️ <span id="menuImg">Create image</span></div>
+            <div class="popup-item" onclick="selectFeature('Create music')">🎵 <span id="menuMusic">Create music</span></div>
+            <div class="popup-item" onclick="selectFeature('Canvas')">🎨 <span id="menuCanvas">Canvas</span></div>
+            <div class="popup-item" onclick="selectFeature('Guided Learning')">📖 <span id="menuLearn">Guided Learning</span></div>
+        </div>
+
         <div class="input-box">
-            <button class="icon-btn" title="Add File/Media" onclick="alert('মিডিয়া অপشن')">＋</button>
+            <button class="icon-btn" title="Add Features" onclick="togglePlusMenu()">＋</button>
             <input type="text" id="userInput" placeholder="Ask King Pro" onkeypress="handleKeyPress(event)">
-            <button class="icon-btn" title="Voice Search" onclick="alert('وائس سرچ')">🎤</button>
-            <button class="icon-btn mic-active-btn" title="Send / Audio Wave" onclick="sendMessage()">➤</button>
+            <button class="icon-btn" title="Voice Search" onclick="alert('Voice Search activated')">🎤</button>
+            <button class="icon-btn" title="Send" onclick="sendMessage()">➤</button>
         </div>
     </div>
 
@@ -305,6 +361,18 @@
         function toggleSidebar() {
             document.getElementById("sidebar").classList.toggle("open");
             document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        function togglePlusMenu() {
+            document.getElementById("plusPopupMenu").classList.toggle("active");
+            document.getElementById("popupOverlay").classList.toggle("active");
+        }
+
+        function selectFeature(featureName) {
+            togglePlusMenu();
+            const inputField = document.getElementById("userInput");
+            inputField.value = `[${featureName}] `;
+            inputField.focus();
         }
 
         function toggleDarkMode() {
@@ -396,7 +464,7 @@
             setTimeout(() => {
                 const aiMsg = document.createElement("div");
                 aiMsg.className = "message ai-message";
-                const reply = currentLang === 'ur' ? `کنگ پرو 6 کا جواب: "${text}" پر عمل جاری ہے۔` : `King Pro Response: Processing "${text}".`;
+                const reply = currentLang === 'ur' ? `کنگ پرو 6: "${text}" پر کارਵਾਈ جاری ہے۔` : `King Pro: Processing "${text}".`;
                 aiMsg.innerText = reply;
                 chatContainer.appendChild(aiMsg);
                 saveMessageToLocalStorage('ai', reply);
