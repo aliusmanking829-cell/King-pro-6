@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Pro 6 - Complete Features with Video</title>
+    <title>King Pro 6 - Real API & Advanced Features</title>
     <style>
         * {
             margin: 0;
@@ -59,7 +59,7 @@
             align-items: center;
             gap: 12px;
         }
-        .menu-toggle-btn, .theme-toggle-btn, .lang-toggle-btn {
+        .menu-toggle-btn, .theme-toggle-btn, .lang-toggle-btn, .api-key-btn {
             background: transparent;
             border: 1px solid var(--border-color);
             padding: 6px 12px;
@@ -158,7 +158,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             max-width: 800px;
             width: 100%;
             margin: 0 auto;
@@ -179,8 +179,20 @@
             font-size: 1.8rem;
             font-weight: 400;
         }
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 90%;
+        }
+        .user-wrapper {
+            align-self: flex-start;
+        }
+        .ai-wrapper {
+            align-self: flex-end;
+            width: 100%;
+        }
         .message {
-            max-width: 85%;
             padding: 12px 18px;
             border-radius: 16px;
             line-height: 1.6;
@@ -189,14 +201,42 @@
         .user-message {
             background: var(--user-msg-bg);
             color: var(--user-msg-text);
-            align-self: flex-start;
         }
         .ai-message {
             background: var(--ai-msg-bg);
             color: var(--text-color);
-            align-self: flex-end;
             border: 1px solid var(--border-color);
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .ai-image-preview {
+            max-width: 100%;
+            border-radius: 12px;
+            margin-top: 10px;
+            display: none;
+            border: 1px solid var(--border-color);
+        }
+        /* Action buttons under AI response */
+        .ai-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 4px;
+            font-size: 0.85rem;
+        }
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+        .action-btn:hover {
+            background: var(--hover-bg);
         }
 
         /* Input Bar & Popup Menu */
@@ -289,6 +329,43 @@
             background: var(--border-color);
             margin: 6px 0;
         }
+
+        /* API Modal */
+        .api-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 2000;
+            display: none;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .api-modal.active { display: block; }
+        .api-modal input {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+        .save-api-btn {
+            background: #0b57d0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -300,9 +377,19 @@
             <span class="app-title">King Pro 6</span>
         </div>
         <div class="top-right">
+            <button class="api-key-btn" onclick="openApiModal()">🔑 API Key</button>
             <button class="lang-toggle-btn" id="langBtn" onclick="toggleLanguage()">اردو / English</button>
             <button class="theme-toggle-btn" onclick="toggleDarkMode()">🌙</button>
         </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div class="popup-overlay" id="apiOverlay" onclick="openApiModal()"></div>
+    <div class="api-modal" id="apiModal">
+        <h3>اپنی Google Gemini API Key درج کریں</h3>
+        <p style="font-size: 0.85rem; color: #707579; margin-top: 5px;">یہ آپ کے براؤزر میں محفوظ رہے گی تاکہ حقیقی جواب مل سکیں۔</p>
+        <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+        <button class="save-api-btn" onclick="saveApiKey()">محفوظ کریں (Save)</button>
     </div>
 
     <!-- Sidebar Overlay -->
@@ -347,7 +434,7 @@
         <div class="input-box">
             <button class="icon-btn" title="Add Features" onclick="togglePlusMenu()">＋</button>
             <input type="text" id="userInput" placeholder="Ask King Pro" onkeypress="handleKeyPress(event)">
-            <button class="icon-btn" title="Voice Search" onclick="alert('Voice Search activated')">🎤</button>
+            <button class="icon-btn" title="Voice Search" onclick="startVoiceInput()">🎤</button>
             <button class="icon-btn" title="Send" onclick="sendMessage()">➤</button>
         </div>
     </div>
@@ -357,7 +444,27 @@
 
         window.onload = function() {
             loadChatHistory();
+            const savedKey = localStorage.getItem("kingProApiKey");
+            if (!savedKey) {
+                openApiModal();
+            }
         };
+
+        function openApiModal() {
+            document.getElementById("apiModal").classList.toggle("active");
+            document.getElementById("apiOverlay").classList.toggle("active");
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById("apiKeyInput").value.trim();
+            if (key) {
+                localStorage.setItem("kingProApiKey", key);
+                openApiModal();
+                alert("API Key کامیابی سے محفوظ ہو گئی ہے!");
+            } else {
+                alert("براہ کرम درست API Key درج کریں۔");
+            }
+        }
 
         function toggleSidebar() {
             document.getElementById("sidebar").classList.toggle("open");
@@ -407,9 +514,9 @@
             }
         }
 
-        function saveMessageToLocalStorage(sender, text) {
+        function saveMessageToLocalStorage(sender, text, imageUrl = "") {
             let history = JSON.parse(localStorage.getItem("kingProChatHistory")) || [];
-            history.push({ sender, text });
+            history.push({ sender, text, imageUrl });
             localStorage.setItem("kingProChatHistory", JSON.stringify(history));
         }
 
@@ -419,10 +526,7 @@
                 const chatContainer = document.getElementById("chatContainer");
                 chatContainer.innerHTML = "";
                 history.forEach(item => {
-                    const msgDiv = document.createElement("div");
-                    msgDiv.className = `message ${item.sender === 'user' ? 'user-message' : 'ai-message'}`;
-                    msgDiv.innerText = item.text;
-                    chatContainer.appendChild(msgDiv);
+                    appendMessageToDOM(item.sender, item.text, item.imageUrl);
                 });
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
@@ -439,7 +543,77 @@
             toggleSidebar();
         }
 
-        function sendMessage() {
+        function appendMessageToDOM(sender, text, imageUrl = "") {
+            const chatContainer = document.getElementById("chatContainer");
+            const wrapper = document.createElement("div");
+            wrapper.className = `message-wrapper ${sender === 'user' ? 'user-wrapper' : 'ai-wrapper'}`;
+
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `message ${sender === 'user' ? 'user-message' : 'ai-message'}`;
+            msgDiv.innerText = text;
+            wrapper.appendChild(msgDiv);
+
+            if (imageUrl) {
+                const img = document.createElement("img");
+                img.className = "ai-image-preview";
+                img.src = imageUrl;
+                img.style.display = "block";
+                wrapper.appendChild(img);
+            }
+
+            if (sender === 'ai') {
+                const actionsDiv = document.createElement("div");
+                actionsDiv.className = "ai-actions";
+                actionsDiv.innerHTML = `
+                    <button class="action-btn" onclick="speakText(this)">🔊 سنیں (Audio)</button>
+                    <button class="action-btn" onclick="alert('شکریہ! فیڈबैक نوٹ کر لیا گیا: صحیح')">👍 صحیح</button>
+                    <button class="action-btn" onclick="alert('شکریہ! فیڈबैक نوٹ کر لیا गया: गलत')">👎 غلط</button>
+                `;
+                wrapper.appendChild(actionsDiv);
+            }
+
+            chatContainer.appendChild(wrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Text to Speech Function (Read aloud)
+        function speakText(btn) {
+            const msgText = btn.parentElement.previousElementSibling.innerText;
+            const utterance = new SpeechSynthesisUtterance(msgText);
+            utterance.lang = currentLang === 'ur' ? 'ur-PK' : 'en-US';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Voice Input Function (Speech to Text)
+        function startVoiceInput() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("آپ کا براؤزر وائس ان پٹ سپورट ਨਹੀਂ करता۔");
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = currentLang === 'ur' ? 'ur-PK' : 'en-US';
+            
+            recognition.onstart = function() {
+                document.getElementById("userInput").placeholder = "سن رہے ہیں... (Listening)";
+            };
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById("userInput").value = transcript;
+                document.getElementById("userInput").placeholder = "Ask King Pro";
+            };
+            recognition.onerror = function() {
+                document.getElementById("userInput").placeholder = "Ask King Pro";
+                alert("آواز پہچاننے میں مسئلہ ہوا۔ دوبارہ کوشش کریں۔");
+            };
+            recognition.onend = function() {
+                document.getElementById("userInput").placeholder = "Ask King Pro";
+            };
+            recognition.start();
+        }
+
+        // Real Gemini API Call Function
+        async function sendMessage() {
             const inputField = document.getElementById("userInput");
             const chatContainer = document.getElementById("chatContainer");
             const welcomeScreen = document.getElementById("welcomeScreen");
@@ -451,26 +625,54 @@
                 welcomeScreen.remove();
             }
 
-            // User Message
-            const userMsg = document.createElement("div");
-            userMsg.className = "message user-message";
-            userMsg.innerText = text;
-            chatContainer.appendChild(userMsg);
+            // Append User Message
+            appendMessageToDOM('user', text);
             saveMessageToLocalStorage('user', text);
-            
             inputField.value = "";
-            chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // AI Response simulation
-            setTimeout(() => {
-                const aiMsg = document.createElement("div");
-                aiMsg.className = "message ai-message";
-                const reply = currentLang === 'ur' ? `کنگ پرو 6: "${text}" پر کارਵਾਈ جاری ہے۔` : `King Pro: Processing "${text}".`;
-                aiMsg.innerText = reply;
-                chatContainer.appendChild(aiMsg);
-                saveMessageToLocalStorage('ai', reply);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 600);
+            const apiKey = localStorage.getItem("kingProApiKey");
+            if (!apiKey) {
+                alert("پہले اپنی Gemini API Key درج کریں (اوپر دائیں طرف کلک کریں)۔");
+                openApiModal();
+                return;
+            }
+
+            // Real API Request to Gemini
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: text }] }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const aiReply = data.candidates[0].content.parts[0].text;
+                    
+                    // Optional demo image integration if user asks for pictures/countries/objects
+                    let demoImage = "";
+                    const lowerText = text.toLowerCase();
+                    if (lowerText.includes("image") || lowerText.includes("pakistan") || lowerText.includes("photo") || lowerText.includes("تکویرا") || lowerText.includes("تصویر")) {
+                        demoImage = "https://picsum.photos/600/350"; // Sample dynamic image placeholder
+                    }
+
+                    appendMessageToDOM('ai', aiReply, demoImage);
+                    saveMessageToLocalStorage('ai', aiReply, demoImage);
+                } else {
+                    const errorMsg = "معذرت، API سے درست جواب موصول نہیں ہوا۔ براہ کرم اپنی Key چیک کریں۔";
+                    appendMessageToDOM('ai', errorMsg);
+                    saveMessageToLocalStorage('ai', errorMsg);
+                }
+            } catch (error) {
+                const netErrorMsg = "انٹرنیٹ کنکشن یا API میں خرابی پیش آئی ہے۔";
+                appendMessageToDOM('ai', netErrorMsg);
+                saveMessageToLocalStorage('ai', netErrorMsg);
+            }
         }
 
         function handleKeyPress(event) {
